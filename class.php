@@ -1,52 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Management</title>
-    
+
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        padding: 20px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
 
-    form {
-        background-color: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    label {
-        margin-bottom: 10px;
-        display: block;
-    }
+        label {
+            margin-bottom: 10px;
+            display: block;
+        }
 
-    input[type="text"], select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 3px;
-        border: 1px solid #ccc;
-    }
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
 
-    input[type="submit"] {
-        padding: 10px 20px;
-        background-color: #5cb85c;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
 
-    input[type="submit"]:hover {
-        background-color: #4cae4c;
-    }
+        input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
     </style>
 
 </head>
+
 <body>
     <h2>Add New Class</h2>
 
@@ -111,4 +114,5 @@
     </table>
 
 </body>
+
 </html>

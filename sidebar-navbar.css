@@ -1,10 +1,57 @@
+.logo{
+    width: 50px;
+    margin-left: 5px;
+}
+.searchBar{
+    width: 60%;
+}
+.search{
+    padding: 10px;
+    width: 700px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+.searchBar {
+    position: relative;
+    display: inline-block;
+}
 
+.search {
+    width: 100%;
+    padding: 10px 40px 10px 20px; 
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    box-sizing: border-box;
 
-
-.container {
-    margin-left: 250px; /* Adjust this value if the sidebar width changes */
+}
+.navbar {
+    background-color: #2C3E50; 
+    padding: 50px;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 20px;
-    width: calc(100% - 250px); /* Adjust this value if the sidebar width changes */
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #0056b3; 
+}
+.container {
+    margin-left: 250px; 
+    padding: 20px;
+    width: calc(100% - 250px); 
     background-color: #ffffff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -15,9 +62,6 @@ h2 {
     color: #333;
     margin-bottom: 20px;
 }
-
-
-
 .sidebar {
     position: fixed;
     left: 0;
@@ -46,7 +90,9 @@ h2 {
     text-decoration: none;
     padding: 10px 0;
     font-size: 16px;
-    transition: background-color 0.3s ease, padding-left 0.3s ease; /* Smooth transition for background and padding */
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .sidebar a:hover {
@@ -87,3 +133,39 @@ h2 {
 .burger-menu .line:nth-child(2) {
     width: 25px;
 }
+.sidebar {
+    display: block;
+}
+
+.navbar {
+    display: none;
+}
+
+.burger-menu {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    .navbar {
+        display: flex;
+    }
+    .burger-menu {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar {
+        display: none;
+    }
+    .sidebar {
+        display: block;
+    }
+    .burger-menu {
+        display: block;
+    }
+}
+

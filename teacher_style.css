@@ -1,4 +1,6 @@
-/* General Styles */
+*{
+    margin: 0;
+}
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -13,15 +15,16 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     border-radius: 8px;
+    
 }
 
-/* Heading */
+
 h2 {
     text-align: center;
     color: #333;
 }
 
-/* Form Styles */
+
 form {
     width: 50%;
     margin: 0 auto;
@@ -49,7 +52,7 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Table Styles */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -75,7 +78,7 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Action Links */
+
 a {
     text-decoration: none;
     color: #337ab7;
@@ -96,4 +99,12 @@ a:hover {
 
 .action-links a.delete {
     color: #f44336;
+}
+.add_teacher_container{
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
 }

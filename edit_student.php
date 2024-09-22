@@ -4,11 +4,9 @@ include("database_conn.php");
 $message = '';
 $message_class = '';
 
-// Handle form submission for searching students
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search'])) {
     $search_term = $_POST['search_term'];
 
-    // Query to search for students by ID or name
     $sql = "SELECT * FROM students WHERE student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ?";
     $stmt = $conn->prepare($sql);
     $search_term_wildcard = "%$search_term%";
@@ -39,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search'])) {
     $stmt->close();
 }
 
-// Handle displaying the edit form if a student ID is provided
+
 if (isset($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
 
@@ -59,39 +57,36 @@ if (isset($_GET['student_id'])) {
     $stmt->close();
 } else {
     $student = null;
-}
+} 
 
 $conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    
-    <link rel="stylesheet" href = "dashboard_style.css">
-    <link rel="stylesheet" href="sidebar.css"> 
+    <link rel="stylesheet" href="dashboard_style.css">
+    <link rel="stylesheet" href="sidebar-navbar.css">
     <title>Search and Edit Student</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             background-color: #f4f4f4;
         }
-        h1{
-         margin-left: 800px;
+
+        h1 {
+            margin-left: 800px;
 
         }
 
         h2 {
             color: #333;
             margin-bottom: 20px;
-         
-            
+
+
         }
 
         form {
@@ -100,6 +95,7 @@ $conn->close();
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            margin: 20px;
         }
 
         label {
@@ -118,14 +114,16 @@ $conn->close();
             box-sizing: border-box;
         }
 
-        /* Flexbox container for search form */
+
         .search-form {
             display: flex;
-            flex-wrap: wrap;
-        }
+            /* flex-wrap: wrap; */
 
+        }
+        .search-form button{
+            height: 38  px;
+        }
         .search-form input[type="text"] {
-            flex: 1;
             margin-right: 10px;
         }
 
@@ -149,11 +147,18 @@ $conn->close();
             margin-top: 20px;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
-        }
 
-        th, td {
+        }
+        table{
+            margin: 20px;
+            width: 98%;
+        }
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
@@ -188,6 +193,7 @@ $conn->close();
             border-radius: 4px;
             color: white;
             background-color: #007bff;
+            border: none;
         }
 
         .button:hover {
@@ -204,71 +210,86 @@ $conn->close();
     </style>
 </head>
 <body>
+<div class="burger-menu" id="burgerMenu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
 
-<div class="sidebar" id="sidebar">
-        <h2>VNHS RMS</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
-        <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
-   
-        <a href="settings.html">Settings</a>
-        <a href="#logout" class="logout">Log out</a>
+    <div class="sidebar" id="sidebar">
+      <h2>VNHS RMS</h2>
+      <a href="Dashboard.html">Dashboard</a>
+      <a href="http://localhost/proj3rec.management/student_record.php"
+        >Student Records</a
+      >
+      <a href="http://localhost/proj3rec.management/view_teachers.php"
+        >Teacher Records</a
+      >
+      <a href="settings.html">Settings</a>
+      <a href="#logout" class="logout">Log out</a>
     </div>
 
     <nav class="navbar">
-        <img src="vega national high school.png" alt="" class="logo">
-        <div class="searchBar">
-            <input type="text" class="search" placeholder="Search...">  
-        </div>
+      <img src="vega national high school.png" alt="" class="logo" />
+      <div class="nav-links">
+        <a href="Dashboard.html">Dashboard</a>
+        <a href="http://localhost/proj3rec.management/student_record.php"
+          >Student Records</a
+        >
+        <a href="http://localhost/proj3rec.management/view_teachers.php"
+          >Teacher Records</a
+        >
+        <a href="settings.html">Settings</a>
+        <a href="#logout" class="logout">Log out</a>
+      </div>
     </nav>
 
 
-   
+
     <form action="" method="POST" class="search-form">
-        <input type="text" id="search_term" name="search_term" placeholder="Enter Student ID or Name" required>
+        <input  type="text" id="search_term" name="search_term" placeholder="Enter Student ID or Name" required>
         <button type="submit" name="search">Search</button>
     </form>
 
     <?php if (isset($search_results)) echo $search_results; ?>
 
     <?php if ($student): ?>
-    <h2>Edit Student Information</h2>
-    <form action="update_student.php" method="POST">
-        <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
-        
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($student['first_name']); ?>" required>
+        <h2>Edit Student Information</h2>
+        <form action="update_student.php" method="POST">
+            <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
 
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($student['last_name']); ?>" required>
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($student['first_name']); ?>" required>
 
-        <label for="grade">Grade:</label>
-        <input type="text" id="grade" name="grade_level" value="<?php echo htmlspecialchars($student['grade_level']); ?>" required>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($student['last_name']); ?>" required>
 
-        <label for="enrollment_date">Enrollment Date:</label>
-        <input type="date" id="enrollment_date" name="enrollment_date" value="<?php echo htmlspecialchars($student['enrollment_date']); ?>" required>
+            <label for="grade">Grade:</label>
+            <input type="text" id="grade" name="grade_level" value="<?php echo htmlspecialchars($student['grade_level']); ?>" required>
 
-        <label for="emergency_contacts">Emergency Contacts:</label>
-        <input type="text" id="emergency_contacts" name="emergency_contacts" value="<?php echo htmlspecialchars($student['emergency_contacts']); ?>">
+            <label for="enrollment_date">Enrollment Date:</label>
+            <input type="date" id="enrollment_date" name="enrollment_date" value="<?php echo htmlspecialchars($student['enrollment_date']); ?>" required>
 
-        <label for="medical_info">Medical Info:</label>
-        <input type="text" id="medical_info" name="medical_info" value="<?php echo htmlspecialchars($student['medical_info']); ?>">
+            <label for="emergency_contacts">Emergency Contacts:</label>
+            <input type="text" id="emergency_contacts" name="emergency_contacts" value="<?php echo htmlspecialchars($student['emergency_contacts']); ?>">
 
-        <label for="parent_names">Parent Names:</label>
-        <input type="text" id="parent_names" name="parent_names" value="<?php echo htmlspecialchars($student['parent_names']); ?>">
+            <label for="parent_names">Parent Names:</label>
+            <input type="text" id="parent_names" name="parent_names" value="<?php echo htmlspecialchars($student['parent_names']); ?>">
 
-        <label for="parent_contact">Parent Contact:</label>
-        <input type="text" id="parent_contact" name="parent_contact" value="<?php echo htmlspecialchars($student['parent_contact']); ?>">
+            <label for="parent_contact">Parent Contact:</label>
+            <input type="text" id="parent_contact" name="parent_contact" value="<?php echo htmlspecialchars($student['parent_contact']); ?>">
 
-        <button type="submit" name="update">Update</button>
-    </form>
+            <button class="button
+            " type="submit" name="update" >Update</button>
+        </form>
     <?php endif; ?>
 
     <?php if (isset($message)): ?>
-    <div class="message <?php echo $message_class; ?>">
-        <?php echo htmlspecialchars($message); ?>
-    </div>
+        <div class="message <?php echo $message_class; ?>">
+            <?php echo htmlspecialchars($message); ?>
+        </div>
     <?php endif; ?>
-<script src="burger_menu.js"></script>
+    <script src="burger_menu.js"></script>
 </body>
+
 </html>

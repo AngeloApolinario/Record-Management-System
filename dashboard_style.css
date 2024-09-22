@@ -1,5 +1,4 @@
 
-/* CSS FOR DASHBOARD */
 *{
     margin: 0;
     padding: 0;
@@ -10,68 +9,15 @@ body {
     font-family: Arial, sans-serif;
     background-color: #F8F9FA; 
 }
-.logo{
-    width: 50px;
-    margin-left: 5px;
-}
-.searchBar{
-    width: 60%;
-}
-.search{
-    padding: 10px;
-    width: 700px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-}
-.searchBar {
-    position: relative;
-    display: inline-block;
-}
-
-.search {
-    width: 100%;
-    padding: 10px 40px 10px 20px; 
-    font-size: 16px;
-    border: none;
-    border-radius: 10px;
-    box-sizing: border-box;
-
-}
-
-
- /* CSS FOR NAVBAR */
-.navbar {
-    background-color: #2C3E50; 
-    padding: 10px;
-    color: white;
-    text-align: center;
-    font-size: 18px;
-
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-
-    padding: 20px;
-}
-
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px 15px;
-    transition: background-color 0.3s;
-}
-
-.navbar a:hover {
-    background-color: #0056b3; 
-}
-
-
-
 
 .content {
-    margin-left: 50px; 
+    width: 95%;
+    margin: 20px auto;
+    background-color: rgb(241, 241, 241);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    border-radius: 8px;
+
 }
 
 .welcome {
@@ -131,6 +77,6 @@ body {
     background-color: #ffffff;
     padding: 15px;
     border-radius: 5px;
-    height: 200px; /* Example height for widgets */
+    height: 200px;
     margin-bottom: 20px;
 }

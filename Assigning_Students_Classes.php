@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,24 +66,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-collapse: collapse;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
     </style>
 </head>
+
 <body>
     <h2>Assign Students to Class</h2>
-    
+
     <form action="" method="POST">
         <label for="class_id">Select Class:</label>
         <select name="class_id" id="class_id" required>
             <?php
-            // Fetch classes from the database
             $query = "SELECT class_id, class_name FROM classes";
             $result = mysqli_query($conn, $query);
             if (!$result) {
@@ -119,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <th>Student Name</th>
         </tr>
         <?php
-        // Display assigned students to each class
+ 
         $query = "SELECT c.class_name, s.first_name
                   FROM students_classes sc
                   JOIN classes c ON sc.class_id = c.class_id
@@ -138,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ?>
     </table>
 </body>
+
 </html>
 
 <?php

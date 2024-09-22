@@ -1,14 +1,14 @@
 <?php
-include 'database_conn.php'; 
+include 'database_conn.php';
 
 $search = '';
-$query = "SELECT * FROM teachers"; 
+$query = "SELECT * FROM teachers";
 
 if (isset($_POST['submit-button'])) {
-    $search_type = mysqli_real_escape_string($conn, $_POST['search-type']); 
-    $search_input = mysqli_real_escape_string($conn, $_POST['search-input']); 
+    $search_type = mysqli_real_escape_string($conn, $_POST['search-type']);
+    $search_input = mysqli_real_escape_string($conn, $_POST['search-input']);
 
-    
+
     if ($search_type === 'id') {
         $query = "SELECT * FROM teachers WHERE teacher_id LIKE '%$search_input%'";
     } else if ($search_type === 'name') {
@@ -17,9 +17,16 @@ if (isset($_POST['submit-button'])) {
 } elseif (isset($_POST['view-all-button'])) {
     $query = "SELECT * FROM teachers";
 }
-
 $result = mysqli_query($conn, $query);
-$fields = mysqli_fetch_fields($result);
+
+if (mysqli_num_rows($result) > 0) {
+    $fields = mysqli_fetch_fields($result);
+} else {
+    $fields = [];
+    $no_result_message = "No records found matching your search criteria";
+}
+
+
 
 
 function formatFieldName($field_name)
@@ -37,10 +44,9 @@ function formatFieldName($field_name)
 <html>
 
 <head>
-    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="sidebar-navbar.css">
     <title>View Teachers</title>
     <style>
-        /* General Body Styles */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
@@ -49,7 +55,7 @@ function formatFieldName($field_name)
         }
 
         .container {
-            width: 80%;
+            width: 95%;
             margin: 30px auto;
             background-color: #ffffff;
             padding: 20px;
@@ -101,11 +107,10 @@ function formatFieldName($field_name)
 
 
         .add-teacher-btn {
-
-            padding: 15px 15px;
+            padding: 15px;
             font-size: 16px;
             text-align: center;
-            background-color: #007bff;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
@@ -114,37 +119,6 @@ function formatFieldName($field_name)
             transition: background-color 0.3s ease;
         }
 
-        .logo {
-            width: 50px;
-            margin-left: 5px;
-        }
-
-        .searchBar {
-            width: 60%;
-        }
-
-        .search {
-            padding: 10px;
-            width: 700px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-        }
-
-        .searchBar {
-            position: relative;
-            display: inline-block;
-        }
-
-        .search {
-            width: 100%;
-            padding: 10px 40px 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            box-sizing: border-box;
-
-        }
         .view-all-button {
             padding: 10px;
             font-size: 16px;
@@ -155,6 +129,7 @@ function formatFieldName($field_name)
             border-radius: 5px;
             margin-left: 10px;
         }
+
         .search-button {
             padding: 10px;
             font-size: 16px;
@@ -165,35 +140,6 @@ function formatFieldName($field_name)
             border-radius: 5px;
             margin-left: 10px;
         }
-
-
-        /* CSS FOR NAVBAR */
-        .navbar {
-            background-color: #2C3E50;
-            padding: 10px;
-            color: white;
-            text-align: center;
-            font-size: 18px;
-
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-
-            padding: 20px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-            transition: background-color 0.3s;
-        }
-
-        .navbar a:hover {
-            background-color: #0056b3;
-        }
-
-
 
         .add-teacher-btn:hover {
             background-color: #0056b3;
@@ -274,6 +220,10 @@ function formatFieldName($field_name)
         .action-links a.delete:hover {
             background-color: #c82333;
         }
+        .no-result{
+            text-align: center;
+            font-size: 30px;
+        }
 
 
         @media screen and (max-width: 768px) {
@@ -291,34 +241,35 @@ function formatFieldName($field_name)
 </head>
 
 <body>
-
     <div class="burger-menu" id="burgerMenu">
         <div class="line"></div>
         <div class="line"></div>
         <div class="line"></div>
     </div>
 
-    <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
         <h2>VNHS RMS</h2>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="Dashboard.html">Dashboard</a>
         <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
         <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
-
         <a href="settings.html">Settings</a>
         <a href="#logout" class="logout">Log out</a>
     </div>
+
     <nav class="navbar">
-        <img src="vega national high school.png" alt="" class="logo">
-        <div class="searchBar">
-            <input type="text" class="search" placeholder="Search...">
+        <img src="vega national high school.png" alt="" class="logo" />
+        <div class="nav-links">
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
+            <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
+            <a href="settings.html">Settings</a>
+            <a href="#logout" class="logout">Log out</a>
         </div>
     </nav>
     <div class="container">
         <h2>Teachers List</h2>
-        
+
         <div class="top-controls">
-        <a href="add_teacher.php" class="add-teacher-btn">Add Teacher</a>
             <form class="search-bar" method="post" action="view_teachers.php">
                 <select name="search-type" class="search-type">
                     <option value="id">Search by ID</option>
@@ -328,14 +279,19 @@ function formatFieldName($field_name)
                 <input type="submit" class="search-button" value="Search" name="submit-button">
                 <input type="submit" class="view-all-button" value="View All" name="view-all-button">
             </form>
+            <a href="add_teacher.php" class="add-teacher-btn">Add Teacher</a>
         </div>
+        <?php
+        if (isset($no_result_message)) {
+            echo "<div class='no-result'>$no_result_message</div>";
+        }
 
+        ?>
         <table>
             <tr>
                 <?php
                 if ($fields) {
                     foreach ($fields as $field) {
-
                         echo "<th>" . formatFieldName($field->name) . "</th>";
                     }
                     echo "<th>Actions</th>";

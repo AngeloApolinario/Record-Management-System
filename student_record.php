@@ -1,20 +1,13 @@
-
-
-
-
-
-
 <?php
 include("database_conn.php");
 
-// Initialize variables
 $fields = [];
 $result = null;
 
 $view_all_query = "SELECT * FROM students";
 $query = $view_all_query;
 
-// Handle form submissions
+
 if (isset($_POST["submit-button"])) {
     $search = filter_input(INPUT_POST, "search-input", FILTER_SANITIZE_SPECIAL_CHARS);
     $search_type = $_POST['search-type'];
@@ -34,36 +27,57 @@ if (isset($_POST["submit-button"])) {
         }
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
-        $fields = mysqli_fetch_fields($result);
+
+        if (mysqli_num_rows($result) > 0) {
+            $fields = mysqli_fetch_fields($result);
+        } else {
+            $fields = [];
+            $no_results_message = "No records found matching your search criteria.";
+        }
     }
 } else if (isset($_POST["view-all-button"]) || !isset($_POST["submit-button"])) {
     $result = mysqli_query($conn, $view_all_query);
     if ($result) {
-        $fields = mysqli_fetch_fields($result);
+        if (mysqli_num_rows($result) > 0) {
+            $fields = mysqli_fetch_fields($result);
+        } else {
+            $fields = [];
+            $no_results_message = "No records found in the database.";
+        }
     }
+}
+function formatFieldName($field_name)
+{
+
+    $formatted = str_replace('_', ' ', $field_name);
+
+    $formatted = ucwords($formatted);
+
+    return $formatted;
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<link rel="stylesheet" href="sidebar.css">
-  
-<style>
+    <link rel="stylesheet" href="sidebar-navbar.css">
+
+    <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             background-color: #F8F9FA;
             margin: 0;
-            
+
         }
 
-        /* Navbar Styles */
+
         .navbar {
             background-color: #2C3E50;
             padding: 10px 20px;
@@ -107,19 +121,22 @@ if (isset($_POST["submit-button"])) {
             background-color: #0056b3;
         }
 
-        
-
-      
-       
         .content {
-    margin-left: 50px;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end; 
-    flex-direction: column;}
-    .content form{
-        
-    }
+            margin-left: 50px;
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: column;
+            width: 95%;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .content form {
+
+        }
 
         h1 {
             font-size: 24px;
@@ -184,35 +201,35 @@ if (isset($_POST["submit-button"])) {
         }
 
         .student-table {
-    width: 100%; /* Make sure the table takes full width */
-    max-width: 100%; /* Prevent the table from exceeding the screen width */
-    border-collapse: collapse;
-    margin-top: 20px;
-    overflow-x: auto; /* Enable horizontal scrolling if content overflows */
-}
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
 
-.student-table th,
-.student-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    word-wrap: break-word; /* Break long words for responsiveness */
-}
+        }
 
-.student-table th {
-    background-color: #007BFF;
-    color: white;
-}
+        .student-table th,
+        .student-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            word-wrap: break-word;
+
+        }
+
+        .student-table th {
+            background-color: #007BFF;
+            color: white;
+        }
+
         .student-table td a:hover {
             text-decoration: underline;
         }
 
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
+       
 
-        .pagination button {
+        .editBtn{
             padding: 10px 15px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -221,39 +238,64 @@ if (isset($_POST["submit-button"])) {
             color: white;
             border-radius: 5px;
             margin: 0 5px;
+            text-decoration: none;
         }
 
-        .pagination button:hover {
+        .editBtn :hover {
             background-color: #0056b3;
+        }
+        .no-results{
+            text-align: center;
+            font-size: 30px;
+            /* border-top: 1px solid black; */
+        }
+        .functionality{
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
-<body>
 
-    
-<!-- Burger Menu Icon -->
+<body>
 <div class="burger-menu" id="burgerMenu">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
     </div>
 
-    <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <h2>VNHS RMS</h2>
-        <a href="dashboard.html">dashboard</a>
-        <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
-        <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
-        
+      <h2>VNHS RMS</h2>
+      <a href="Dashboard.html">Dashboard</a>
+      <a href="http://localhost/proj3rec.management/student_record.php"
+        >Student Records</a
+      >
+      <a href="http://localhost/proj3rec.management/view_teachers.php"
+        >Teacher Records</a
+      >
+      <a href="settings.html">Settings</a>
+      <a href="#logout" class="logout">Log out</a>
+    </div>
 
+    <nav class="navbar">
+      <img src="vega national high school.png" alt="" class="logo" />
+      <div class="nav-links">
+        <a href="Dashboard.html">Dashboard</a>
+        <a href="http://localhost/proj3rec.management/student_record.php"
+          >Student Records</a
+        >
+        <a href="http://localhost/proj3rec.management/view_teachers.php"
+          >Teacher Records</a
+        >
         <a href="settings.html">Settings</a>
         <a href="#logout" class="logout">Log out</a>
-    </div>
+      </div>
+    </nav>
 
 
 
     <div class="content">
         <h1>Student Records</h1>
+        <div class="functionality">
         <form class="search-bar" method="post" action="student_record.php">
             <select name="search-type" class="search-type">
                 <option value="id">Search by ID</option>
@@ -272,6 +314,13 @@ if (isset($_POST["submit-button"])) {
                 <button type="submit" class="edit_button">Edit</button>
             </form>
         </div>
+        </div>
+
+        <?php
+        if (isset($no_results_message)) {
+            echo "<div class='no-results'>$no_results_message</div>";
+        }
+        ?>
 
         <table class="student-table">
             <thead>
@@ -279,7 +328,7 @@ if (isset($_POST["submit-button"])) {
                     <?php
                     if ($fields) {
                         foreach ($fields as $field) {
-                            echo "<th>{$field->name}</th>";
+                            echo "<th>" . formatFieldName($field->name) . "</th>";
                         }
                         echo "<th>Actions</th>";
                     }
@@ -294,7 +343,7 @@ if (isset($_POST["submit-button"])) {
                         foreach ($row as $cell) {
                             echo "<td>$cell</td>";
                         }
-                        echo "<td><a href='edit_student.php?student_id={$row['student_id']}'>Edit</a></td>";
+                        echo "<td><a class='editBtn' href='edit_student.php?student_id={$row['student_id']}'>Edit</a></td>";
                         echo "</tr>";
                     }
                 }
@@ -302,12 +351,10 @@ if (isset($_POST["submit-button"])) {
             </tbody>
         </table>
 
-        <div class="pagination">
-            <button>Previous</button>
-            <button>Next</button>
-        </div>
+        
     </div>
-  
+
     <script src="burger_menu.js"></script>
 </body>
+
 </html>
