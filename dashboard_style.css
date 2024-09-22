@@ -1,0 +1,136 @@
+
+/* CSS FOR DASHBOARD */
+*{
+    margin: 0;
+    padding: 0;
+}
+body {
+    margin: 0;
+    margin-left: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F8F9FA; 
+}
+.logo{
+    width: 50px;
+    margin-left: 5px;
+}
+.searchBar{
+    width: 60%;
+}
+.search{
+    padding: 10px;
+    width: 700px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+.searchBar {
+    position: relative;
+    display: inline-block;
+}
+
+.search {
+    width: 100%;
+    padding: 10px 40px 10px 20px; 
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+}
+
+
+ /* CSS FOR NAVBAR */
+.navbar {
+    background-color: #2C3E50; 
+    padding: 10px;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #0056b3; 
+}
+
+
+
+
+.content {
+    margin-left: 50px; 
+    padding: 20px;
+}
+
+.welcome {
+    margin-bottom: 20px;
+}
+
+.metrics {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.metric {
+    background-color: #007BFF; 
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    width: 30%;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.events {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    width: 48%;
+}
+
+.quick-links ul, .messages ul, .announcements ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.quick-links li, .messages li, .announcements li {
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.quick-links a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.quick-links a:hover {
+    text-decoration: underline;
+}
+
+.calendar-widget, .chart {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    height: 200px; /* Example height for widgets */
+    margin-bottom: 20px;
+}
