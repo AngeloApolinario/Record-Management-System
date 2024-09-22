@@ -1,31 +1,45 @@
 <?php
-
-
-include 'database_conn.php'; // Database connection
+include 'database_conn.php'; 
 
 $search = '';
-if (isset($_POST['search'])) {
-    $search = mysqli_real_escape_string($conn, $_POST['search']);
+$query = "SELECT * FROM teachers"; 
+
+if (isset($_POST['submit-button'])) {
+    $search_type = mysqli_real_escape_string($conn, $_POST['search-type']); 
+    $search_input = mysqli_real_escape_string($conn, $_POST['search-input']); 
+
+    
+    if ($search_type === 'id') {
+        $query = "SELECT * FROM teachers WHERE teacher_id LIKE '%$search_input%'";
+    } else if ($search_type === 'name') {
+        $query = "SELECT * FROM teachers WHERE name LIKE '%$search_input%'";
+    }
+} elseif (isset($_POST['view-all-button'])) {
+    $query = "SELECT * FROM teachers";
 }
 
-$query = "SELECT * FROM teachers WHERE name LIKE '%$search%' OR subject LIKE '%$search%' OR contact_info LIKE '%$search%'";
 $result = mysqli_query($conn, $query);
+$fields = mysqli_fetch_fields($result);
+
+
+function formatFieldName($field_name)
+{
+
+    $formatted = str_replace('_', ' ', $field_name);
+
+    $formatted = ucwords($formatted);
+
+    return $formatted;
+}
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
-
-
-<link rel="stylesheet" href="sidebar.css">
-
-
-
+    <link rel="stylesheet" href="sidebar.css">
     <title>View Teachers</title>
     <style>
-
-
-   
         /* General Body Styles */
         body {
             font-family: 'Arial', sans-serif;
@@ -49,15 +63,13 @@ $result = mysqli_query($conn, $query);
             margin-bottom: 20px;
         }
 
-        /* Flex Container for Search Form and Add Button */
         .top-controls {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        /* Search Form Styles */
         .search-form {
             display: flex;
             align-items: center;
@@ -87,9 +99,9 @@ $result = mysqli_query($conn, $query);
             background-color: #0056b3;
         }
 
-        /* Add Teacher Button */
+
         .add-teacher-btn {
-           
+
             padding: 15px 15px;
             font-size: 16px;
             text-align: center;
@@ -101,61 +113,85 @@ $result = mysqli_query($conn, $query);
             text-decoration: none;
             transition: background-color 0.3s ease;
         }
-        .logo{
-    width: 50px;
-    margin-left: 5px;
-}
-.searchBar{
-    width: 60%;
-}
-.search{
-    padding: 10px;
-    width: 700px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-}
-.searchBar {
-    position: relative;
-    display: inline-block;
-}
 
-.search {
-    width: 100%;
-    padding: 10px 40px 10px 20px; 
-    font-size: 16px;
-    border: none;
-    border-radius: 10px;
-    box-sizing: border-box;
+        .logo {
+            width: 50px;
+            margin-left: 5px;
+        }
 
-}
+        .searchBar {
+            width: 60%;
+        }
+
+        .search {
+            padding: 10px;
+            width: 700px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+
+        .searchBar {
+            position: relative;
+            display: inline-block;
+        }
+
+        .search {
+            width: 100%;
+            padding: 10px 40px 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            box-sizing: border-box;
+
+        }
+        .view-all-button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        .search-button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
 
 
- /* CSS FOR NAVBAR */
-.navbar {
-    background-color: #2C3E50; 
-    padding: 10px;
-    color: white;
-    text-align: center;
-    font-size: 18px;
+        /* CSS FOR NAVBAR */
+        .navbar {
+            background-color: #2C3E50;
+            padding: 10px;
+            color: white;
+            text-align: center;
+            font-size: 18px;
 
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
 
-    padding: 20px;
-}
+            padding: 20px;
+        }
 
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px 15px;
-    transition: background-color 0.3s;
-}
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            transition: background-color 0.3s;
+        }
 
-.navbar a:hover {
-    background-color: #0056b3; 
-}
+        .navbar a:hover {
+            background-color: #0056b3;
+        }
 
 
 
@@ -163,14 +199,36 @@ $result = mysqli_query($conn, $query);
             background-color: #0056b3;
         }
 
-        /* Table Styles */
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-bar select,
+        .search-bar input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .search-bar input[type="text"] {
+            width: 300px;
+            margin-left: 10px;
+        }
+
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
             text-align: center;
             border-bottom: 1px solid #ddd;
@@ -186,12 +244,10 @@ $result = mysqli_query($conn, $query);
             background-color: #f1f1f1;
         }
 
-        /* Zebra Striping */
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
 
-        /* Action Links */
         .action-links a {
             margin-right: 10px;
             text-decoration: none;
@@ -219,22 +275,24 @@ $result = mysqli_query($conn, $query);
             background-color: #c82333;
         }
 
-        /* Responsive Table */
+
         @media screen and (max-width: 768px) {
             table {
                 width: 100%;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 10px;
                 font-size: 14px;
             }
         }
     </style>
 </head>
+
 <body>
 
-<div class="burger-menu" id="burgerMenu">
+    <div class="burger-menu" id="burgerMenu">
         <div class="line"></div>
         <div class="line"></div>
         <div class="line"></div>
@@ -246,50 +304,60 @@ $result = mysqli_query($conn, $query);
         <a href="dashboard.html">Dashboard</a>
         <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
         <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
-        
+
         <a href="settings.html">Settings</a>
         <a href="#logout" class="logout">Log out</a>
     </div>
     <nav class="navbar">
         <img src="vega national high school.png" alt="" class="logo">
         <div class="searchBar">
-            <input type="text" class="search" placeholder="Search...">  
+            <input type="text" class="search" placeholder="Search...">
         </div>
     </nav>
     <div class="container">
         <h2>Teachers List</h2>
-        <a href="add_teacher.php" class="add-teacher-btn">Add Teacher</a>
-        <!-- Top Controls Container -->
+        
         <div class="top-controls">
-            <form method="POST" class="search-form">
-                <input type="text" name="search" placeholder="Search by name, subject, or contact info" value="<?php echo htmlspecialchars($search); ?>">
-                <button type="submit">Search</button>
+        <a href="add_teacher.php" class="add-teacher-btn">Add Teacher</a>
+            <form class="search-bar" method="post" action="view_teachers.php">
+                <select name="search-type" class="search-type">
+                    <option value="id">Search by ID</option>
+                    <option value="name">Search by Name</option>
+                </select>
+                <input type="text" placeholder="Search..." name="search-input">
+                <input type="submit" class="search-button" value="Search" name="submit-button">
+                <input type="submit" class="view-all-button" value="View All" name="view-all-button">
             </form>
         </div>
 
         <table>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Subject</th>
-                <th>Contact Info</th>
-                <th>Actions</th>
+                <?php
+                if ($fields) {
+                    foreach ($fields as $field) {
+
+                        echo "<th>" . formatFieldName($field->name) . "</th>";
+                    }
+                    echo "<th>Actions</th>";
+                }
+                ?>
             </tr>
             <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-            <tr>
-                <td><?php echo htmlspecialchars($row['teacher_id']); ?></td>
-                <td><?php echo htmlspecialchars($row['name']); ?></td>
-                <td><?php echo htmlspecialchars($row['subject']); ?></td>
-                <td><?php echo htmlspecialchars($row['contact_info']); ?></td>
-                <td class="action-links">
-                    <a href="edit_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="edit">Edit</a>
-                    <a href="delete_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="delete" onclick="return confirm('Are you sure?')">Delete</a>
-                </td>
-            </tr>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['teacher_id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['subject']); ?></td>
+                    <td><?php echo htmlspecialchars($row['contact_info']); ?></td>
+                    <td class="action-links">
+                        <a href="edit_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="edit">Edit</a>
+                        <a href="delete_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
             <?php } ?>
         </table>
     </div>
 
-  <script src="burger_menu.js"></script>
+    <script src="burger_menu.js"></script>
 </body>
+
 </html>
