@@ -57,7 +57,7 @@ if (isset($_GET['student_id'])) {
     $stmt->close();
 } else {
     $student = null;
-} 
+}
 
 $conn->close();
 ?>
@@ -120,9 +120,11 @@ $conn->close();
             /* flex-wrap: wrap; */
 
         }
-        .search-form button{
-            height: 38  px;
+
+        .search-form button {
+            height: 38 px;
         }
+
         .search-form input[type="text"] {
             margin-right: 10px;
         }
@@ -153,10 +155,12 @@ $conn->close();
             border: 1px solid #ddd;
 
         }
-        table{
+
+        table {
             margin: 20px;
             width: 98%;
         }
+
         th,
         td {
             padding: 10px;
@@ -209,47 +213,44 @@ $conn->close();
         }
     </style>
 </head>
+
 <body>
-<div class="burger-menu" id="burgerMenu">
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
+    <div class="burger-menu" id="burgerMenu">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
     </div>
 
     <div class="sidebar" id="sidebar">
-      <h2>VNHS RMS</h2>
-      <a href="Dashboard.html">Dashboard</a>
-      <a href="http://localhost/proj3rec.management/student_record.php"
-        >Student Records</a
-      >
-      <a href="http://localhost/proj3rec.management/view_teachers.php"
-        >Teacher Records</a
-      >
-      <a href="settings.html">Settings</a>
-      <a href="#logout" class="logout">Log out</a>
+        <h2>VNHS RMS</h2>
+        <a href="Dashboard.html">Dashboard</a>
+        <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
+        <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
+        <a href="settings.html">Settings</a>
+        <a href="#logout" class="logout">Log out</a>
     </div>
 
     <nav class="navbar">
-      <img src="vega national high school.png" alt="" class="logo" />
-      <div class="nav-links">
-        <a href="Dashboard.html">Dashboard</a>
-        <a href="http://localhost/proj3rec.management/student_record.php"
-          >Student Records</a
-        >
-        <a href="http://localhost/proj3rec.management/view_teachers.php"
-          >Teacher Records</a
-        >
-        <a href="settings.html">Settings</a>
-        <a href="#logout" class="logout">Log out</a>
-      </div>
+        <img src="vega national high school.png" alt="" class="logo" />
+        <div class="nav-links">
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
+            <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
+            <a href="settings.html">Settings</a>
+            <a href="#logout" class="logout">Log out</a>
+        </div>
     </nav>
 
 
 
-    <form action="" method="POST" class="search-form">
-        <input  type="text" id="search_term" name="search_term" placeholder="Enter Student ID or Name" required>
-        <button type="submit" name="search">Search</button>
-    </form>
+    <form class="search-form" method="post" action="edit_student.">
+            <select name="search-type" class="search-type">
+                <option value="id">Search by ID</option>
+                <option value="name">Search by Name</option>
+            </select>
+            <input type="text" placeholder="Search..." name="search-input">
+            <input type="submit" class="search-button" value="Search" name="submit-button">
+        </form>
 
     <?php if (isset($search_results)) echo $search_results; ?>
 
@@ -280,7 +281,7 @@ $conn->close();
             <input type="text" id="parent_contact" name="parent_contact" value="<?php echo htmlspecialchars($student['parent_contact']); ?>">
 
             <button class="button
-            " type="submit" name="update" >Update</button>
+            " type="submit" name="update">Update</button>
         </form>
     <?php endif; ?>
 

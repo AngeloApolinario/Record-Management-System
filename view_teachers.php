@@ -220,7 +220,8 @@ function formatFieldName($field_name)
         .action-links a.delete:hover {
             background-color: #c82333;
         }
-        .no-result{
+
+        .no-result {
             text-align: center;
             font-size: 30px;
         }
@@ -298,18 +299,23 @@ function formatFieldName($field_name)
                 }
                 ?>
             </tr>
-            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['teacher_id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['subject']); ?></td>
-                    <td><?php echo htmlspecialchars($row['contact_info']); ?></td>
-                    <td class="action-links">
-                        <a href="edit_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="edit">Edit</a>
-                        <a href="delete_teacher.php?id=<?php echo urlencode($row['teacher_id']); ?>" class="delete" onclick="return confirm('Are you sure?')">Delete</a>
-                    </td>
-                </tr>
-            <?php } ?>
+            <?php
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    foreach ($row as $cell) {
+                        echo "<td>$cell</td>";
+                    }
+                    echo "<td class='action-links'> 
+                    <a href='edit_teacher.php?id=" . urlencode($row['teacher_id']) . "' class='edit'>Edit</a>
+                    <a href='delete_teacher.php?id=" . urlencode($row['teacher_id']) . "' class='delete' onclick='return confirm(\"Are you sure?\")'>Delete</a>
+                    </td>";
+                    echo "</tr>";
+                }
+            }
+            ?>
+           
+
         </table>
     </div>
 
