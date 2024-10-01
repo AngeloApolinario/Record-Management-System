@@ -101,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label for="student_ids">Select Students:</label>
         <select name="student_ids[]" id="student_ids" multiple required>
             <?php
-            // Fetch students from the database
             $query = "SELECT student_id, first_name FROM students";
             $result = mysqli_query($conn, $query);
             if (!$result) {

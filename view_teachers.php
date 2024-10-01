@@ -250,7 +250,7 @@ function formatFieldName($field_name)
 
     <div class="sidebar" id="sidebar">
         <h2>VNHS RMS</h2>
-        <a href="Dashboard.html">Dashboard</a>
+        <a href="Dashboard.php">Dashboard</a>
         <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
         <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
         <a href="settings.html">Settings</a>

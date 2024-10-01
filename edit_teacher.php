@@ -110,7 +110,7 @@ if (isset($_POST['submit'])) {
 
     <div class="sidebar" id="sidebar">
       <h2>VNHS RMS</h2>
-      <a href="Dashboard.html">Dashboard</a>
+      <a href="Dashboard.php">Dashboard</a>
       <a href="http://localhost/proj3rec.management/student_record.php"
         >Student Records</a
       >
@@ -124,7 +124,7 @@ if (isset($_POST['submit'])) {
     <nav class="navbar">
       <img src="vega national high school.png" alt="" class="logo" />
       <div class="nav-links">
-        <a href="Dashboard.html">Dashboard</a>
+        <a href="Dashboard.php">Dashboard</a>
         <a href="http://localhost/proj3rec.management/student_record.php"
           >Student Records</a
         >
