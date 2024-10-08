@@ -7,45 +7,70 @@
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="/Record-Management-System-second_revision/sidebar-navbar.css">
 
+
     <style>
+        * {
+            margin: 0;
+        }
+
         .class-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 20px;
         }
 
         .class-table th,
         .class-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
         }
+
+        .content {
+            margin: 20px auto;
+            width: 95%;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
 
         .class-table th {
             background-color: #007BFF;
             color: white;
         }
 
-        .class-table td {
-            background-color: #f9f9f9;
-        }
-
         .edit-button,
         .delete-button,
-        .save-button,
-        .schedule-button { /* Added class for schedule button */
+        .save-button {
             background-color: #007BFF;
             color: white;
             border: none;
             padding: 8px 12px;
             cursor: pointer;
             border-radius: 4px;
+
         }
 
         .edit-button:hover,
         .delete-button:hover,
-        .save-button:hover,
-        .schedule-button:hover { /* Hover effect for schedule button */
+        .save-button:hover {
+            background-color: #0056b3;
+        }
+
+        .schedule-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .schedule-button:hover {
             background-color: #0056b3;
         }
 
@@ -76,6 +101,20 @@
             width: 300px;
         }
 
+        .section_names {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .section_names:hover {
+            background-color: #e7f1ff;
+            color: #0056b3;
+        }
+
         .link {
             color: #007BFF;
             text-decoration: none;
@@ -100,11 +139,10 @@
             const row = button.closest('tr');
             const nextRow = row.nextElementSibling;
 
-            // Toggle the display of the edit row
             if (nextRow.style.display === 'none' || nextRow.style.display === '') {
-                nextRow.style.display = 'table-row'; // Show the edit row
+                nextRow.style.display = 'table-row';
             } else {
-                nextRow.style.display = 'none'; // Hide the edit row
+                nextRow.style.display = 'none';
             }
         }
     </script>
@@ -116,130 +154,50 @@
     include("database_conn.php");
     include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
-    $searchTerm = "";
+    $sectionQuery = "
+    SELECT sec.section_id, sec.section_name, COUNT(ss.student_id) AS total_students 
+    FROM section sec
+    LEFT JOIN student_section ss ON sec.section_id = ss.section_id
+    GROUP BY sec.section_id, sec.section_name
+";
+    $sectionResult = $conn->query($sectionQuery);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
-        $searchTerm = $_POST['search_term'];
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['edit_class'])) {
-            $class_id = $_POST['class_id'];
-            $subject = $_POST['subject'];
-            $teacher_id = $_POST['teacher_id'];
-
-            $update_query = "UPDATE classes SET subject = ?, teacher_id = ? WHERE class_id = ?";
-            $stmt = $conn->prepare($update_query);
-            $stmt->bind_param("ssi", $subject, $teacher_id, $class_id);
-
-            if ($stmt->execute()) {
-                echo "<script>alert('Class updated successfully.');</script>";
-            } else {
-                echo "<script>alert('Error updating class: " . mysqli_error($conn) . "');</script>";
-            }
-            $stmt->close();
-        }
-
-        if (isset($_POST['delete_class'])) {
-            $class_id = $_POST['class_id'];
-
-            $delete_query = "DELETE FROM classes WHERE class_id = ?";
-            $stmt = $conn->prepare($delete_query);
-            $stmt->bind_param("i", $class_id);
-
-            if ($stmt->execute()) {
-                echo "<script>alert('Class deleted successfully.');</script>";
-            } else {
-                echo "<script>alert('Error deleting class: " . mysqli_error($conn) . "');</script>";
-            }
-            $stmt->close();
-        }
-    }
-
-    $query = "SELECT classes.class_id, classes.subject, teachers.teacher_id, teachers.name 
-          FROM classes 
-          LEFT JOIN teachers ON classes.teacher_id = teachers.teacher_id
-          WHERE classes.subject LIKE ? OR teachers.name LIKE ?";
-
-    $stmt = $conn->prepare($query);
-    $searchParam = "%$searchTerm%";
-    $stmt->bind_param("ss", $searchParam, $searchParam);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result) {
-        echo "<h1>Classes</h1>";
-
-        echo "<div class='search-bar'>
-            <form method='post'>
-                <input type='text' name='search_term' value='" . htmlspecialchars($searchTerm) . "' placeholder='Search by subject or teacher name...' />
-                <button type='submit' name='search' class='edit-button'>Search</button>
-            </form>
-          </div>";
-
-        echo "<table class='class-table'>";
-        echo "<thead>
-            <tr>
-                <th>Section</th>
-                <th>Total Students</th>
-                <th>Actions</th>
-            </tr>
-          </thead>";
-        echo "<tbody>";
-
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>";
-            echo "
-            <td>{$row['subjects']}</td>
-            <td><a href='/Record-Management-System-second_revision/view_teachers.php?teacher_id={$row['teacher_id']}' class='link'>{$row['name']}</a></td>
-        ";
-
-            echo "
-            <td>
-                <form method='post'>
-                    <input type='hidden' name='class_id' value='{$row['class_id']}'>
-                    <button type='button' onclick='editClass(this)' class='edit-button'>Edit</button>
-                    <button type='submit' name='delete_class' class='delete-button' onclick='return confirm(\"Are you sure you want to delete this class?\");'>Delete</button>
-                    <a href='schedule.php?class_id={$row['class_id']}' class='schedule-button'>Schedule</a> <!-- Schedule Button -->
-                </form>
-            </td>
-        ";
-            echo "</tr>";
-
-            echo "
-            <tr class='edit-row' style='display: none;'>
-                <form method='post'>
-                    <input type='hidden' name='class_id' value='{$row['class_id']}'>
-                    <td><input type='text' name='subject' value='{$row['subject']}' required></td>
-                    <td>
-                        <select name='teacher_id' required>
-        ";
-
-            $teacher_query = "SELECT teacher_id, name FROM teachers";
-            $teacher_result = mysqli_query($conn, $teacher_query);
-            while ($teacher_row = mysqli_fetch_assoc($teacher_result)) {
-                $selected = $teacher_row['teacher_id'] == $row['teacher_id'] ? 'selected' : '';
-                echo "<option value='{$teacher_row['teacher_id']}' $selected>{$teacher_row['name']}</option>";
-            }
-            echo "
-                        </select>
-                    </td>
-                    <td>
-                        <button type='submit' name='edit_class' class='save-button'>Save</button>
-                    </td>
-                </form>
-            </tr>
-        ";
-        }
-
-        echo "</tbody>";
-        echo "</table>";
-    } else {
-        echo "Error fetching classes: " . mysqli_error($conn);
-    }
 
     $conn->close();
     ?>
+    <div class="content">
+        <h1 style="text-align:center;">Class Management</h1>
+
+
+        <table border="1" class="class-table">
+            <thead>
+                <tr>
+                    <th>Section Name</th>
+                    <th>Total Students</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $sectionResult->fetch_assoc()): ?>
+                    <tr>
+                        <td>
+                            <a href="view_students.php?section_id=<?= $row['section_id'] ?>" target="_blank" class="section_names">
+                                <?= $row['section_name'] ?>
+                            </a>
+                        </td>
+                        <td>
+                            <?= $row['total_students'] ?>
+                        </td>
+                        <td>
+                            <a href="view_schedule.php?section_id=<?= $row['section_id'] ?>" target="_blank" class="schedule-button">View Schedule</a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+
+    </div>
+
 </body>
 
 </html>

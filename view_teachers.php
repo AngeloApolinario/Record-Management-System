@@ -260,7 +260,7 @@ function formatFieldName($field_name)
 
     
     <div class="container">
-        <h2>Teachers List</h2>
+        <h1>Teachers List</h1>
 
         <div class="top-controls">
             <form class="search-bar" method="post" action="view_teachers.php">

@@ -1,11 +1,9 @@
 <?php
 include("database_conn.php");
 
-// Check if student_id is provided
 if (isset($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
 
-    // Prepare the SQL query to delete the student's record
     $sql = "DELETE FROM students WHERE student_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $student_id);

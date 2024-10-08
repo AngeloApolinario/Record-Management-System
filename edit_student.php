@@ -71,7 +71,7 @@ $conn->close();
     <link rel="stylesheet" href="dashboard_style.css">
     <link rel="stylesheet" href="sidebar-navbar.css">
     <title>Search and Edit Student</title>
-    <style>
+    <style> 
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -243,14 +243,14 @@ $conn->close();
 
 
 
-    <form class="search-form" method="post" action="edit_student.">
+    <!-- <form class="search-form" method="post" action="edit_student.">
             <select name="search-type" class="search-type">
                 <option value="id">Search by ID</option>
                 <option value="name">Search by Name</option>
             </select>
             <input type="text" placeholder="Search..." name="search-input">
             <input type="submit" class="search-button" value="Search" name="submit-button">
-        </form>
+        </form> -->
 
     <?php if (isset($search_results)) echo $search_results; ?>
 

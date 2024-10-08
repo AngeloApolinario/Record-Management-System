@@ -19,12 +19,13 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 20px;
+            margin: 0;
         }
 
         h1,
         h2 {
             color: #333;
+            text-align: center;
         }
 
         form {
@@ -44,6 +45,43 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
             width: 300px;
         }
 
+        .form-section {
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 70%;
+        }
+
+        .form-section form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .form-section form div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .form-section form label {
+            width: 30%;
+        }
+
+        .form-section form input {
+            width: 65%;
+            padding: 20px 20px;
+            border-radius: 5px;
+            outline: none;
+            border: none;
+            background-color: #f0f0f0;
+        }
+
         button {
             padding: 10px 20px;
             background-color: #007BFF;
@@ -57,13 +95,6 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
             background-color: #0056b3;
         }
 
-        .form-section {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
 
         table {
             width: 100%;
@@ -88,7 +119,6 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
     <div class="form-section">
         <h2>Search for Student</h2>
         <form action="" method="post">
-            <label for="searchQuery">Enter Student Name:</label>
             <input type="text" name="searchQuery" id="searchQuery" required placeholder="Enter student's first or last name">
             <br>
             <button type="submit" name="search_student">Search Student</button>
@@ -97,8 +127,9 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
     <?php
 
+
     if (isset($_POST['search_student'])) {
-        $searchQuery = mysqli_real_escape_string($conn, $_POST['searchQuery']);
+        $searchQuery = mysqli_real_escape_string($conn, $_POST['searchQuery']); // Sanitize user input
 
         $search_query = "SELECT student_id, first_name, last_name FROM students 
                      WHERE first_name LIKE '%$searchQuery%' 
@@ -124,6 +155,7 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
                 while ($class = mysqli_fetch_assoc($classes_result)) {
                     echo "<option value='{$class['section_id']}'>{$class['section_name']}</option>";
                 }
+
                 echo "      </select>
                         <button type='submit' name='assign_student'>Assign</button>
                     </form>
@@ -132,38 +164,53 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
             }
             echo "</table>";
         } else {
-            echo "<p>No students found matching the search query.</p>";
+            echo "<h1 style = 'text-align:center;'>No students found matching the search query.</h1>";
         }
     }
 
-
     if (isset($_POST['assign_student'])) {
         $student_id = $_POST['student_id'];
-        $section_id = $_POST['class_id']; // Using class_id for section ID
-    
-        // Check if a class was selected
+        $section_id = $_POST['class_id'];
+
         if (empty($section_id)) {
             echo "<p>Please select a class before assigning the student.</p>";
         } else {
             $check_query = "SELECT * FROM student_section WHERE student_id = '$student_id' AND section_id = '$section_id'";
             $check_result = mysqli_query($conn, $check_query);
-    
+
             if (mysqli_num_rows($check_result) > 0) {
                 echo "<p>Student is already assigned to this section!</p>";
             } else {
                 $assign_query = "INSERT INTO student_section (student_id, section_id) VALUES ('$student_id', '$section_id')";
-    
+
                 if (mysqli_query($conn, $assign_query)) {
-                    echo "<p>Student assigned to class successfully!</p>";
+                    echo "<p>Student assigned to section successfully!</p>";
+
+                    $class_query = "SELECT class_id FROM schedule WHERE section_id = '$section_id'";
+                    $class_result = mysqli_query($conn, $class_query);
+
+                    while ($class = mysqli_fetch_assoc($class_result)) {
+                        $class_id = $class['class_id'];
+
+                        $enroll_class_query = "INSERT INTO student_class (student_id, class_id) VALUES ('$student_id', '$class_id')";
+
+                        // if (mysqli_query($conn, $enroll_class_query)) {
+                        //     echo "<p>Student successfully enrolled in class ID: $class_id.</p>";
+                        // } else {
+                        //     echo "<p>Error enrolling student in class ID: $class_id. " . mysqli_error($conn) . "</p>";
+                        // }
+                    }
                 } else {
+
                     echo "<p>Error: " . mysqli_error($conn) . "</p>";
                 }
             }
         }
     }
 
-
     ?>
+
+
 
 
 </body>

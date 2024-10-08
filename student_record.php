@@ -11,7 +11,7 @@ $query = $view_all_query;
 // Handle delete request
 if (isset($_GET['delete_student_id'])) {
     $student_id_to_delete = filter_input(INPUT_GET, 'delete_student_id', FILTER_SANITIZE_NUMBER_INT);
-    
+
     if ($student_id_to_delete) {
         $delete_query = "DELETE FROM students WHERE student_id = ?";
         if ($stmt = mysqli_prepare($conn, $delete_query)) {
@@ -19,7 +19,7 @@ if (isset($_GET['delete_student_id'])) {
             mysqli_stmt_execute($stmt);
             if (mysqli_stmt_affected_rows($stmt) > 0) {
                 echo "Student record deleted successfully.";
-            } 
+            }
         }
     }
 }
@@ -102,9 +102,10 @@ function formatFieldName($field_name)
 
         .search-bar {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            /* align-items: center;
+            justify-content: center; */
             margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         .search-bar select,
@@ -193,20 +194,18 @@ function formatFieldName($field_name)
         }
 
         .addBtn {
-    padding: 10px 15px;
-    font-size: 16px;
-    background-color: #28A745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28A745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
 
-.addBtn:hover {
-    background-color: #218838;
-}
-
-
+        .addBtn:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 
@@ -222,8 +221,8 @@ function formatFieldName($field_name)
             <input type="submit" class="search-button" value="Search" name="submit-button">
             <input type="submit" class="view-all-button" value="View All" name="view-all-button">
         </form>
-      <!-- Add New Student Button -->
-      <div class="action-buttons">
+        <!-- Add New Student Button -->
+        <div class="action-buttons">
             <form action="add.php" method="post">
                 <button type="submit" class="addBtn">Add New Student</button>
             </form>

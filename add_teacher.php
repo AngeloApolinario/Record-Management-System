@@ -1,24 +1,37 @@
 <?php
+ob_start();
 include 'database_conn.php';
 include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $subject = $_POST['subject'];
-    $gender = $_POST['contact_info'];
+    $gender = $_POST['gender']; 
     $contact_info = $_POST['contact_info'];
     $home_address = $_POST['home_address'];
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "INSERT INTO teachers (name, subject, contact_info) VALUES ('$name', '$subject',$gender, '$contact_info', '$home_address', '$username', '$password')";
 
-    if (mysqli_query($conn, $query)) {
-        header("Location: view_teachers.php");
-    } else {
-        echo "Error: " . mysqli_error($conn);
+    $query = "INSERT INTO teachers (name, subject, gender, contact_info, home_address, username, password) 
+              VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    if ($stmt = mysqli_prepare($conn, $query)) {
+
+        mysqli_stmt_bind_param($stmt, 'sssssss', $name, $subject, $gender, $contact_info, $home_address, $username, $password);
+
+
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: view_teachers.php");
+            exit();
+        } else {
+            echo "Error: " . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt);
     }
 }
+ob_end_flush();
 ?>
 
 <!DOCTYPE html>
@@ -52,12 +65,9 @@ if (isset($_POST['submit'])) {
         border-color: #66afe9;
         background-color: #fff;
     }
-
-
 </style>
 
 <body>
-
 
     <div class="burger-menu" id="burgerMenu">
         <div class="line"></div>
@@ -74,14 +84,12 @@ if (isset($_POST['submit'])) {
         <a href="#logout" class="logout">Log out</a>
     </div>
 
-
-
     <div class="add_teacher_container">
         <h2>Add New Teacher</h2>
         <form method="POST" action="">
             Name: <input type="text" name="name" required><br>
             Subject: <input type="text" name="subject" required><br>
-            <label for="select_gender">Gender:</label> <br> <br>
+            <label for="select_gender">Gender:</label> <br><br>
             <select name="gender" id="select_gender">
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -93,7 +101,6 @@ if (isset($_POST['submit'])) {
             <button type="submit" name="submit">Add Teacher</button>
         </form>
     </div>
-
 
     <script src="burger_menu.js"></script>
 

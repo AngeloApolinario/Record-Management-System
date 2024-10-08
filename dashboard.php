@@ -1,16 +1,34 @@
 <?php
 include("database_conn.php");
 
+session_start(); 
+
+
+if (isset($_SESSION['teacher_name'])) {
+    $teacher_name_result = $_SESSION['teacher_name']; 
+} else {
+    $teacher_name_result = "Guest"; 
+}
+
+// $current_date = mysqli_query($conn,"");
 
 $sql = "SELECT COUNT(*) AS total_students FROM students";
 $sql_teachers = "SELECT COUNT(*) AS total_teachers FROM teachers";
+$sql_sections = "SELECT COUNT(*) AS total_section FROM section";
 
 $result = $conn->query($sql);
 $result_teachers = $conn->query($sql_teachers);
+$result_sections = $conn->query($sql_sections);
 
 if ($result) {
   $row = $result->fetch_assoc();
   $total_students = $row['total_students'];
+} else {
+  $total_students = "N/A";
+}
+if ($result_sections) {
+  $row = $result_sections->fetch_assoc();
+  $total_section = $row['total_section'];
 } else {
   $total_students = "N/A";
 }
@@ -35,7 +53,6 @@ $conn->close();
   <title>Document</title>
 
   <link rel="stylesheet" href="dashboard_style.css" />
-  <link rel="stylesheet" href="sidebar-navbar.css" />
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css"
     rel="stylesheet" />
@@ -59,10 +76,10 @@ $conn->close();
     <a href="#logout" class="logout">Log out</a>
   </div>
 
- 
+
   <div class="content">
     <div class="welcome">
-      <h1>Welcome, Ma'am Venice!</h1>
+    <h1>Welcome, <?php echo htmlspecialchars($teacher_name_result); ?></h1>
       <p>Role: Teacher</p>
       <p>Date: [Current Date]</p>
     </div>
@@ -70,7 +87,7 @@ $conn->close();
     <div class="metrics">
       <div class="metric">Total Students: <?php echo $total_students; ?></div>
       <div class="metric">Total Teachers: <?php echo $total_teachers; ?></div>
-      <div class="metric">Section: 30</div>
+      <div class="metric">Section: <?php echo $total_section; ?></div>
     </div>
 
     <div class="summary">
