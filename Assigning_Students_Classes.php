@@ -1,13 +1,13 @@
 <?php
 include 'database_conn.php';
 
-// If the form is submitted, process the input
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $class_id = $_POST['class_id'];
-    $student_ids = $_POST['student_ids']; // This is an array of student IDs
+    $student_ids = $_POST['student_ids']; 
 
     foreach ($student_ids as $student_id) {
-        // Insert each student into the class
+    
         $sql = "INSERT INTO students_classes (class_id, student_id) VALUES ('$class_id', '$student_id')";
 
         if (!mysqli_query($conn, $sql)) {

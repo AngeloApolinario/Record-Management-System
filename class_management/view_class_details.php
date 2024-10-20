@@ -150,7 +150,7 @@
                     <td>" . htmlspecialchars($sched['start_time']) . "</td>
                     <td>" . htmlspecialchars($sched['end_time']) . "</td>
                     <td>" . htmlspecialchars($sched['section_name']) . "</td> 
-                    <td><a href='take_attendance.php?class_id=" . $class_id . "&section_id=" . $sched['section_id'] . "&day=" . $sched['day_of_week'] . "'><button>Take Attendance</button></a></td>
+                     <td><a href='take_attendance.php?class_id=" . urlencode($class_id) . "&section_id=" . urlencode($sched['section_id']) . "'><button>Take Attendance</button></a></td>
                     </tr>";
                 }
                 ?>
