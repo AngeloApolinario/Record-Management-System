@@ -89,7 +89,6 @@ $teachers_result = mysqli_query($conn, $teachers_query);
                 <tr>
                     <th>Teacher Name</th>
                     <th>Class Name</th>
-                    <th>Year Level</th>
                     <th>Details</th>
                 </tr>
             </thead>
@@ -100,7 +99,6 @@ $teachers_result = mysqli_query($conn, $teachers_query);
                     echo "<tr>
                 <td>{$row['teacher_name']}</td>
                 <td>{$row['subject']}</td>
-                <td>{$row['year_level']}</td>
                 <td><a href='view_class_details.php?class_id={$row['class_id']}' class = 'class-detail-button'>View Class Details</a></td>
               </tr>";
                 }

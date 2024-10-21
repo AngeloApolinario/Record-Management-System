@@ -4,13 +4,17 @@ include("database_conn.php");
 session_start(); 
 
 
-if (isset($_SESSION['teacher_name'])) {
-    $teacher_name_result = $_SESSION['teacher_name']; 
+if (isset($_SESSION['user_name']) && isset($_SESSION['role'])) {
+    $user_name = $_SESSION['user_name']; 
+    $role = $_SESSION['role'];
 } else {
-    $teacher_name_result = "Guest"; 
+    $user_name = "Guest"; 
+    $role = "Unknown";
 }
 
-// $current_date = mysqli_query($conn,"");
+
+$current_date = date("F j, Y"); 
+
 
 $sql = "SELECT COUNT(*) AS total_students FROM students";
 $sql_teachers = "SELECT COUNT(*) AS total_teachers FROM teachers";
@@ -26,11 +30,13 @@ if ($result) {
 } else {
   $total_students = "N/A";
 }
+
+
 if ($result_sections) {
   $row = $result_sections->fetch_assoc();
   $total_section = $row['total_section'];
 } else {
-  $total_students = "N/A";
+  $total_section = "N/A";
 }
 
 
@@ -50,7 +56,7 @@ $conn->close();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
+  <title>Dashboard</title>
 
   <link rel="stylesheet" href="dashboard_style.css" />
   <link
@@ -76,18 +82,17 @@ $conn->close();
     <a href="#logout" class="logout">Log out</a>
   </div>
 
-
-  <div class="content" >
+  <div class="content">
     <div class="welcome">
-    <h1>Welcome, <?php echo htmlspecialchars($teacher_name_result); ?></h1>
-      <p>Role: Teacher</p>
-      <p>Date: [Current Date]</p>
+      <h1>Welcome, <?php echo htmlspecialchars($user_name); ?></h1>
+      <p>Role: <?php echo htmlspecialchars($role); ?></p>
+      <p>Date: <?php echo $current_date; ?></p>
     </div>
 
     <div class="metrics">
       <div class="metric">Total Students: <?php echo $total_students; ?></div>
       <div class="metric">Total Teachers: <?php echo $total_teachers; ?></div>
-      <div class="metric">Section: <?php echo $total_section; ?></div>
+      <div class="metric">Total Sections: <?php echo $total_section; ?></div>
     </div>
 
     <div class="summary">
@@ -130,6 +135,7 @@ $conn->close();
       </ul>
     </div>
   </div>
+
   <script src="burger_menu.js"></script>
 </body>
 

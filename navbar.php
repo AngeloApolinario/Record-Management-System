@@ -317,6 +317,7 @@
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/assign_student_form.php')">Assign Student</p>
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_students_in_class.php')">View Section</p>
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_classes.php')">View Classes</p>
+                    <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_attendance.php')">View Attendance</p>
 
                 </div>
             </div>
