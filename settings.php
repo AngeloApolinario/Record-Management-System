@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('database_conn.php');
-
+include('fpdf/fpdf.php'); 
 
 $contact_info = $first_name = $last_name = $password = '';
 $old_password_error = $password_change_success = $password_change_error = '';
@@ -9,67 +9,59 @@ $export_success = '';
 $export_error = '';
 
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'teacher') {
-    $user_name = $_SESSION['user_name']; 
+    $user_name = $_SESSION['user_name'];
 
-    // Prepare and execute SQL query to fetch teacher data
     $sql_query = "SELECT contact_info, name, password FROM teachers WHERE name = ?";
     $stmt = $conn->prepare($sql_query);
     $stmt->bind_param('s', $user_name);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Fetch the result and store the data
     if ($row = $result->fetch_assoc()) {
         $contact_info = $row['contact_info'];
         $password = $row['password'];
     }
 } elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    $user_name = $_SESSION['user_name']; // admin's username
+    $user_name = $_SESSION['user_name']; 
 
-    // Prepare and execute SQL query to fetch admin data
+   
     $sql_query = "SELECT first_name, last_name, password FROM admin WHERE username = ?";
     $stmt = $conn->prepare($sql_query);
     $stmt->bind_param('s', $user_name);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Fetch the result and store the data
     if ($row = $result->fetch_assoc()) {
         $first_name = $row['first_name'];
         $last_name = $row['last_name'];
         $password = $row['password'];
     }
 } else {
-    // Default to guest if no session is found
     $user_name = "Guest";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if the POST request contains password fields
-    if (isset($_POST['old-password']) && isset($_POST['new-password'])) {
-        $old_password = $_POST['old-password'];
-        $new_password = $_POST['new-password'];
+    $old_password = $_POST['old-password'] ?? '';
+    $new_password = $_POST['new-password'] ?? '';
 
-        if ($old_password === $password) {
-            if ($_SESSION['role'] === 'teacher') {
-                $update_query = "UPDATE teachers SET password = ? WHERE name = ?";
-            } else {
-                $update_query = "UPDATE admin SET password = ? WHERE first_name = ?";
-            }
-            $update_stmt = $conn->prepare($update_query);
-            $update_stmt->bind_param('ss', $new_password, $user_name);
-
-            if ($update_stmt->execute()) {
-                $password_change_success = "Password updated successfully!";
-            } else {
-                $password_change_error = "Failed to update the password.";
-            }
+    if ($old_password === $password) {
+        if ($_SESSION['role'] === 'teacher') {
+            $update_query = "UPDATE teachers SET password = ? WHERE name = ?";
         } else {
-            $old_password_error = "Old password is incorrect.";
+            $update_query = "UPDATE admin SET password = ? WHERE username = ?";
         }
+        $update_stmt = $conn->prepare($update_query);
+        $update_stmt->bind_param('ss', $new_password, $user_name);
+
+        if ($update_stmt->execute()) {
+            $password_change_success = "Password updated successfully!";
+        } else {
+            $password_change_error = "Failed to update the password.";
+        }
+    } else {
+        $old_password_error = "Old password is incorrect.";
     }
 
-    // Handle the export form submission
     if (isset($_POST['export-type']) && isset($_POST['export-table'])) {
         $export_type = $_POST['export-type'];
         $export_table = $_POST['export-table'];
@@ -85,12 +77,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($sql_export)) {
             $result = $conn->query($sql_export);
             if ($result->num_rows > 0) {
-                // Here, you can implement your export logic based on $export_type (csv, excel, pdf)
-                if ($export_type === 'csv') {
+                if ($export_type === 'pdf') {
+                    $pdf = new FPDF();
+                    $pdf->AddPage();
+                    $pdf->SetFont('helvetica', 'B', 16);
+                    $pdf->Cell(0, 10, 'Exported Data', 0, 1, 'C');
+                    $pdf->SetFont('helvetica', '', 12);
+
+                    if ($export_table === 'students') {
+                        $headers = ['Student ID', 'First Name', 'Last Name', 'DOB', 'Gender', 'Phone', 'Home Address', 'Grade Level', 'Enrollment Date', 'Parent Names', 'Parent Contact'];
+                    } elseif ($export_table === 'teachers') {
+                        $headers = ['Teacher ID', 'Name', 'Gender', 'Subject', 'Contact Info', 'Home Address', 'Username', 'Password'];
+                    }
+
+
+                    foreach ($headers as $header) {
+                        $pdf->Cell(40, 10, $header, 1);
+                    }
+                    $pdf->Ln();
+
+                    while ($row = $result->fetch_assoc()) {
+                        foreach ($row as $column) {
+                            $pdf->Cell(40, 10, $column, 1);
+                        }
+                        $pdf->Ln();
+                    }
+
+                    $pdf->Output($export_table . '.pdf', 'D'); 
+                    exit();
+                } elseif ($export_type === 'csv') {
                     header('Content-Type: text/csv');
                     header('Content-Disposition: attachment; filename="' . $export_table . '.csv"');
                     $output = fopen("php://output", "w");
-                    // Fetch field names and output them to the CSV
                     $fields = $result->fetch_fields();
                     $headers = [];
                     foreach ($fields as $field) {
@@ -98,17 +116,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     fputcsv($output, $headers);
 
-                    // Fetch rows and output to the CSV
                     while ($row = $result->fetch_assoc()) {
                         fputcsv($output, $row);
                     }
                     fclose($output);
                     exit();
                 } elseif ($export_type === 'excel') {
-                    // Implement Excel export logic
-                } elseif ($export_type === 'pdf') {
-                    // Implement PDF export logic
+                   
                 }
+
                 $export_success = "Data exported successfully.";
             } else {
                 $export_error = "No data found to export.";

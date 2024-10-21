@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+// Assuming you have a session variable that holds the role
+// Example: $_SESSION['role'] = 'admin' or 'teacher';
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +13,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navigation</title>
-    <!-- <link rel="stylesheet" href="sidebar-navbar.css"> -->
     <style>
         .logo {
             width: 50px;
@@ -36,7 +43,6 @@
             border: none;
             border-radius: 10px;
             box-sizing: border-box;
-
         }
 
         .navbar {
@@ -112,11 +118,8 @@
 
         .sidebar a:hover {
             background-color: #d9e2eb;
-            /* Hover background color */
             color: #333;
-            /* Change text color on hover */
             padding-left: 15px;
-            /* Slight padding shift for effect */
         }
 
         /* Burger Menu Styles */
@@ -193,53 +196,34 @@
             }
         }
 
-
-
         .dropdown {
             display: none;
             position: absolute;
-            /* Position dropdown relative to navbar */
             top: 60px;
-            /* Position below the navbar */
             right: 210px;
-            /* Align dropdown with left edge of the nav item */
             background-color: #f9f9f9;
-            /* Light background for dropdown */
             width: 200px;
-            /* Set a fixed width for the dropdown */
             box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            /* Shadow effect */
             z-index: 1;
-            /* Ensure dropdown appears above other elements */
             border-radius: 5px;
-            /* Rounded corners */
         }
 
         .dropdown-content {
             padding: 10px;
-            /* Padding for dropdown */
             display: flex;
             flex-direction: column;
-            /* Stack dropdown items vertically */
         }
 
         .dropdown-content p {
             margin: 0;
-            /* Remove margin from dropdown items */
             cursor: pointer;
-            /* Change cursor to pointer on hover */
             padding: 10px;
-            /* Padding for dropdown items */
             transition: background-color 0.3s;
-            /* Smooth transition for background */
         }
 
         .dropdown-content p:hover {
             background-color: #e9ecef;
-            /* Change background on hover */
         }
-
-
 
         .dropdown {
             display: none;
@@ -288,7 +272,6 @@
             window.location.href = url;
         }
 
-
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById("class-management-dropdown");
             const classManagementLink = document.querySelector('.nav-links a[onclick="toggleDropdown()"]');
@@ -307,8 +290,11 @@
         <div class="nav-links">
             <a href="/Record-Management-System-second_revision/Dashboard.php">Dashboard</a>
             <a href="/Record-Management-System-second_revision/student_record.php">Student Records</a>
-            <a href="/Record-Management-System-second_revision/view_teachers.php">Teacher Records</a>
 
+            <!-- Conditionally hide "Teacher Records" based on role -->
+            <?php if ($role !== 'teacher'): ?>
+                <a href="/Record-Management-System-second_revision/view_teachers.php">Teacher Records</a>
+            <?php endif; ?>
 
             <a href="javascript:void(0);" onclick="toggleDropdown()">Class Management</a>
             <div id="class-management-dropdown" class="dropdown">
@@ -318,12 +304,11 @@
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_students_in_class.php')">View Section</p>
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_classes.php')">View Classes</p>
                     <p onclick="navigateTo('/Record-Management-System-second_revision/class_management/view_attendance.php')">View Attendance</p>
-
                 </div>
             </div>
 
             <a href="/Record-Management-System-second_revision/settings.php">Settings</a>
-            <a href="/Record-Management-System-second_revision/#logout" class="logout">Log out</a>
+            <a href="/Record-Management-System-second_revision/class_management/logout.php" class="logout">Log out</a>
         </div>
     </nav>
 </body>

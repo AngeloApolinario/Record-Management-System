@@ -108,9 +108,8 @@ $conn->close();
     <div class="quick-links">
       <h2>Quick Links</h2>
       <ul>
-        <li><a href="student_record.html">Add New Record</a></li>
-        <li><a href="#view-reports">View Reports</a></li>
-        <li><a href="#manage-classes">Manage Students</a></li>
+        <li><a href="add.php">Add New Record</a></li>
+        <li><a href="student_record.php">Manage Students</a></li>
       </ul>
     </div>
 
