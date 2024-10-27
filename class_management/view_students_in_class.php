@@ -155,11 +155,13 @@
     include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
     $sectionQuery = "
-    SELECT sec.section_id, sec.section_name, COUNT(ss.student_id) AS total_students 
+    SELECT sec.section_id, sec.section_name, COUNT(CASE WHEN s.is_deleted = 0 OR s.is_deleted IS NULL THEN ss.student_id END) AS total_students 
     FROM section sec
     LEFT JOIN student_section ss ON sec.section_id = ss.section_id
+    LEFT JOIN students s ON ss.student_id = s.student_id
     GROUP BY sec.section_id, sec.section_name
 ";
+
     $sectionResult = $conn->query($sectionQuery);
 
 

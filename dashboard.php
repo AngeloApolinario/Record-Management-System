@@ -1,7 +1,6 @@
 <?php
 include("database_conn.php");
-
-session_start(); 
+include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
 
 if (isset($_SESSION['user_name']) && isset($_SESSION['role'])) {
@@ -63,7 +62,7 @@ $conn->close();
     href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css"
     rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
-  <?php include 'navbar.php'; ?>
+
 </head>
 
 <body>

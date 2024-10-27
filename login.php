@@ -3,37 +3,38 @@ include('database_conn.php');
 session_start();
 
 if (isset($_POST['submit'])) {
-  $username = $_POST['username'];
-  $password = $_POST['password'];
-  $role = $_POST['role'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $role = $_POST['role'];
 
-  // Check role and adjust query based on the role
-  if ($role == "admin") {
-    // Admin login query
-    $verification_query = "SELECT * FROM admin WHERE username LIKE ? AND password LIKE ?";
-  } else {
-    // Teacher login query
-    $verification_query = "SELECT * FROM teachers WHERE username LIKE ? AND password LIKE ?";
-  }
+    if ($role == "admin") {
+        $verification_query = "SELECT first_name, last_name FROM admin WHERE username LIKE ? AND password LIKE ?";
+    } else {
+        $verification_query = "SELECT name FROM teachers WHERE username LIKE ? AND password LIKE ?";
+    }
 
-  $stmt = $conn->prepare($verification_query);
-  $stmt->bind_param("ss", $username, $password);
-  $stmt->execute();
-  $result = $stmt->get_result();
+    $stmt = $conn->prepare($verification_query);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-  if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc(); 
-    $user_name = $user['name']; 
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc(); 
+        
+        if ($role == "admin") {
+            $user_name = $user['first_name'] . ' ' . $user['last_name'];
+        } else {
+            $user_name = $user['name'];
+        }
 
-    // Set session variables for both name and role
-    $_SESSION['user_name'] = $user_name;
-    $_SESSION['role'] = $role;
+        $_SESSION['user_name'] = $user_name;
+        $_SESSION['role'] = $role;
 
-    header("Location: dashboard.php"); // Redirect to dashboard
-    exit();
-  } else {
-    echo "<script>alert('Incorrect Username or Password');</script>";
-  }
+        header("Location: dashboard.php"); 
+        exit();
+    } else {
+        echo "<script>alert('Incorrect Username or Password');</script>";
+    }
 }
 ?>
 

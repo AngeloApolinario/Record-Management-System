@@ -32,8 +32,7 @@
             margin: 20px auto;
         }
 
-        th,
-        td {
+        th, td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -66,12 +65,13 @@
 
     $class_id = $_GET['class_id'];
 
+    // Class information query
     $class_query = "
     SELECT c.subject, c.year_level, t.name AS teacher_name 
     FROM classes c
     JOIN teachers t ON c.teacher_id = t.teacher_id
     WHERE c.class_id = ?
-";
+    ";
 
     $stmt = $conn->prepare($class_query);
     $stmt->bind_param('i', $class_id);
@@ -79,11 +79,13 @@
     $class_result = $stmt->get_result();
     $class_info = $class_result->fetch_assoc();
 
+    // Updated student count query to exclude deleted students
     $student_count_query = "
     SELECT COUNT(sc.student_id) AS student_count
     FROM student_class sc
-    WHERE sc.class_id = ?
-";
+    JOIN students s ON sc.student_id = s.student_id
+    WHERE sc.class_id = ? AND s.is_deleted = 0
+    ";
 
     $stmt = $conn->prepare($student_count_query);
     $stmt->bind_param('i', $class_id);
@@ -91,6 +93,7 @@
     $student_count_result = $stmt->get_result();
     $student_count = $student_count_result->fetch_assoc()['student_count'];
 
+    // Schedule query
     $schedule_query = "
     SELECT s.section_name, sch.section_id, sch.day_of_week, sch.start_time, sch.end_time
     FROM schedule sch
@@ -99,8 +102,7 @@
     ORDER BY 
         FIELD(sch.day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
         sch.start_time
-";
-
+    ";
 
     $stmt = $conn->prepare($schedule_query);
     $stmt->bind_param('i', $class_id);
@@ -112,12 +114,13 @@
         $schedule[] = $sched;
     }
 
+    // Updated students query to exclude deleted students
     $students_query = "
     SELECT s.first_name, s.last_name
     FROM students s
     JOIN student_class sc ON s.student_id = sc.student_id
-    WHERE sc.class_id = ?
-";
+    WHERE sc.class_id = ? AND s.is_deleted = 0
+    ";
 
     $stmt = $conn->prepare($students_query);
     $stmt->bind_param('i', $class_id);

@@ -115,7 +115,6 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
     <h1>Class Management</h1>
 
-
     <div class="form-section">
         <h2>Search for Student</h2>
         <form action="" method="post">
@@ -127,13 +126,14 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 
     <?php
 
-
     if (isset($_POST['search_student'])) {
         $searchQuery = mysqli_real_escape_string($conn, $_POST['searchQuery']); // Sanitize user input
 
+        // Modified query to exclude deleted students
         $search_query = "SELECT student_id, first_name, last_name FROM students 
-                     WHERE first_name LIKE '%$searchQuery%' 
-                     OR last_name LIKE '%$searchQuery%'";
+                         WHERE (first_name LIKE '%$searchQuery%' 
+                         OR last_name LIKE '%$searchQuery%') 
+                         AND is_deleted = 0"; // Only show students that are not deleted
         $search_result = mysqli_query($conn, $search_query);
 
         if (mysqli_num_rows($search_result) > 0) {
@@ -195,13 +195,12 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
                         $enroll_class_query = "INSERT INTO student_class (student_id, class_id) VALUES ('$student_id', '$class_id')";
 
                         if (mysqli_query($conn, $enroll_class_query)) {
-                            echo "<p>Student successfully enrolled in class ID: $class_id.</p>";
+                            echo "<h1>Student successfully enrolled in class ID: $class_id.</h1>";
                         } else {
                             echo "<p>Error enrolling student in class ID: $class_id. " . mysqli_error($conn) . "</p>";
                         }
                     }
                 } else {
-
                     echo "<p>Error: " . mysqli_error($conn) . "</p>";
                 }
             }
@@ -209,9 +208,6 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
     }
 
     ?>
-
-
-
 
 </body>
 

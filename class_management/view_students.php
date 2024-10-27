@@ -35,15 +35,13 @@ include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 include("database_conn.php");
 
 
-
 $section_id = $_GET['section_id'];
-
 
 $studentQuery = "
     SELECT s.student_id, s.first_name, s.last_name 
     FROM students s
     JOIN student_section ss ON s.student_id = ss.student_id
-    WHERE ss.section_id = ?
+    WHERE ss.section_id = ? AND s.is_deleted = 0
 ";
 $stmt = $conn->prepare($studentQuery);
 $stmt->bind_param('i', $section_id);
@@ -57,7 +55,7 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Students Enrolled in Section</title>
 </head>
 
 <body>
@@ -72,13 +70,19 @@ $result = $stmt->get_result();
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['student_id']) ?></td>
+                            <td><?= htmlspecialchars($row['first_name']) ?></td>
+                            <td><?= htmlspecialchars($row['last_name']) ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
                     <tr>
-                        <td><?= $row['student_id'] ?></td>
-                        <td><?= $row['first_name'] ?></td>
-                        <td><?= $row['last_name'] ?></td>
+                        <td colspan="3">No students found for this section.</td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

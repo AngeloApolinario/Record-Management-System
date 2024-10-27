@@ -5,14 +5,16 @@ include("navbar.php");
 $fields = [];
 $result = null;
 
-$view_all_query = "SELECT * FROM students";
+// Updated query to exclude deleted records
+$view_all_query = "SELECT * FROM students WHERE is_deleted = 0";
 $query = $view_all_query;
 
 if (isset($_GET['delete_student_id'])) {
     $student_id_to_delete = filter_input(INPUT_GET, 'delete_student_id', FILTER_SANITIZE_NUMBER_INT);
 
     if ($student_id_to_delete) {
-        $delete_query = "DELETE FROM students WHERE student_id = ?";
+        // Soft delete by setting is_deleted to 1
+        $delete_query = "UPDATE students SET is_deleted = 1 WHERE student_id = ?";
         if ($stmt = mysqli_prepare($conn, $delete_query)) {
             mysqli_stmt_bind_param($stmt, 'i', $student_id_to_delete);
             mysqli_stmt_execute($stmt);
@@ -27,10 +29,11 @@ if (isset($_POST["submit-button"])) {
     $search = filter_input(INPUT_POST, "search-input", FILTER_SANITIZE_SPECIAL_CHARS);
     $search_type = $_POST['search-type'];
 
+    // Updated queries to exclude deleted records
     if ($search_type == 'id') {
-        $query = "SELECT * FROM students WHERE student_id = ?";
+        $query = "SELECT * FROM students WHERE student_id = ? AND is_deleted = 0";
     } else if ($search_type == 'name') {
-        $query = "SELECT * FROM students WHERE first_name LIKE ?";
+        $query = "SELECT * FROM students WHERE first_name LIKE ? AND is_deleted = 0";
         $search = "%$search%";
     }
 
@@ -227,7 +230,6 @@ function formatFieldName($field_name)
             </form>
         </div>
 
-
         <?php
         if (isset($no_results_message)) {
             echo "<div class='no-results'>$no_results_message</div>";
@@ -240,7 +242,9 @@ function formatFieldName($field_name)
                     <?php
                     if ($fields) {
                         foreach ($fields as $field) {
-                            echo "<th>" . formatFieldName($field->name) . "</th>";
+                            if ($field->name != 'is_deleted') {
+                                echo "<th>" . formatFieldName($field->name) . "</th>";
+                            }
                         }
                         echo "<th>Actions</th>";
                     }
@@ -252,8 +256,10 @@ function formatFieldName($field_name)
                 if ($result) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>";
-                        foreach ($row as $cell) {
-                            echo "<td>$cell</td>";
+                        foreach ($row as $key => $cell) {
+                            if ($key != 'is_deleted') {
+                                echo "<td>$cell</td>";
+                            }
                         }
 
                         echo "<td>
@@ -270,7 +276,3 @@ function formatFieldName($field_name)
 </body>
 
 </html>
-
-
-
-

@@ -1,7 +1,43 @@
 <?php
-session_start();
 include('database_conn.php');
+include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 include('fpdf/fpdf.php'); 
+
+if (isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $role = $_POST['role'];
+
+    if ($role == "admin") {
+        $verification_query = "SELECT * FROM admin WHERE username = ? AND password = ?";
+    } else {
+        $verification_query = "SELECT * FROM teachers WHERE username = ? AND password = ?";
+    }
+
+    $stmt = $conn->prepare($verification_query);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc(); 
+        if ($role == "admin") {
+            $user_name = $user['first_name'] . ' ' . $user['last_name'];
+        } else {
+            $user_name = $user['name']; 
+        }
+
+        $_SESSION['user_name'] = $user_name;
+        $_SESSION['role'] = $role;
+
+        header("Location: dashboard.php"); 
+        exit();
+    } else {
+        echo "<script>alert('Incorrect Username or Password');</script>";
+    }
+}
+
+
 
 $contact_info = $first_name = $last_name = $password = '';
 $old_password_error = $password_change_success = $password_change_error = '';
@@ -24,16 +60,15 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'teacher') {
 } elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     $user_name = $_SESSION['user_name']; 
 
+    list($first_name, $last_name) = explode(' ', $user_name, 2);
    
-    $sql_query = "SELECT first_name, last_name, password FROM admin WHERE username = ?";
+    $sql_query = "SELECT password FROM admin WHERE first_name = ? AND last_name = ?";
     $stmt = $conn->prepare($sql_query);
-    $stmt->bind_param('s', $user_name);
+    $stmt->bind_param('ss', $first_name, $last_name);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
-        $first_name = $row['first_name'];
-        $last_name = $row['last_name'];
         $password = $row['password'];
     }
 } else {
@@ -47,11 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_password === $password) {
         if ($_SESSION['role'] === 'teacher') {
             $update_query = "UPDATE teachers SET password = ? WHERE name = ?";
-        } else {
-            $update_query = "UPDATE admin SET password = ? WHERE username = ?";
+            $update_stmt = $conn->prepare($update_query);
+            $update_stmt->bind_param('ss', $new_password, $user_name);
+        } elseif($_SESSION['role']==='admin') {
+            $update_query = "UPDATE admin SET password = ? WHERE first_name = ? AND last_name = ?";
+            $update_stmt = $conn->prepare($update_query);
+            $update_stmt->bind_param('sss', $new_password, $first_name, $last_name);
         }
-        $update_stmt = $conn->prepare($update_query);
-        $update_stmt->bind_param('ss', $new_password, $user_name);
 
         if ($update_stmt->execute()) {
             $password_change_success = "Password updated successfully!";
@@ -133,8 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
-
 $conn->close();
 ?>
 
@@ -150,7 +185,6 @@ $conn->close();
             padding: 0;
             box-sizing: border-box;
         }
-
         .settings-container {
             margin: 20px;
             background-color: #fff;
@@ -160,28 +194,23 @@ $conn->close();
             width: calc(100% - 250px);
             margin: 0 auto;
         }
-
         .settings-section {
             margin-bottom: 20px;
         }
-
         .settings-section h2 {
             border-bottom: 2px solid #4caf50;
             padding-bottom: 5px;
             margin-bottom: 15px;
             font-size: 1.5em;
         }
-
         .settings-item {
             margin-bottom: 10px;
         }
-
         .settings-item label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
-
         .settings-item input[type="text"],
         .settings-item input[type="password"],
         .settings-item select {
@@ -191,11 +220,6 @@ $conn->close();
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
-        .settings-item input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
         .settings-item button {
             padding: 10px 15px;
             background-color: #4caf50;
@@ -204,75 +228,33 @@ $conn->close();
             border-radius: 4px;
             cursor: pointer;
         }
-
         .settings-item button:hover {
             background-color: #45a049;
         }
-
-        /* @media (max-width: 768px) {
-        .navbar {
-          width: 100%;
-          left: 0;
-        }
-
-        .sidebar {
-          width: 100%;
-          height: auto;
-          position: relative;
-          display: flex;
-          flex-direction: row;
-          overflow-x: auto;
-        }
-
-        .settings-container {
-          width: 100%;
-          margin-left: 0;
-        }
-
-        .sidebar a {
-          flex: 1;
-          text-align: center;
-        }
-      } */
     </style>
 </head>
 <body>
-<div class="burger-menu" id="burgerMenu">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <h2>VNHS RMS</h2>
-        <a href="Dashboard.php">Dashboard</a>
-        <a href="http://localhost/proj3rec.management/student_record.php">Student Records</a>
-        <a href="http://localhost/proj3rec.management/view_teachers.php">Teacher Records</a>
-        <a href="settings.html">Settings</a>
-        <a href="#logout" class="logout">Log out</a>
-    </div>
-
     <div class="settings-container">
         <div class="settings-section">
             <h2>User Account Settings</h2>
             <div class="settings-item">
                 <label for="profile-name">Profile Name:</label>
-                <input type="text" id="profile-name" value="<?php echo htmlspecialchars($user_name); ?>" />
+                <input type="text" id="profile-name" value="<?php echo htmlspecialchars($user_name); ?>" readonly />
             </div>
 
             <?php if ($_SESSION['role'] === 'teacher') { ?>
                 <div class="settings-item">
                     <label for="profile-email">Email:</label>
-                    <input type="text" id="profile-email" value="<?php echo htmlspecialchars($contact_info); ?>" />
+                    <input type="text" id="profile-email" value="<?php echo htmlspecialchars($contact_info); ?>" readonly />
                 </div>
             <?php } elseif ($_SESSION['role'] === 'admin') { ?>
                 <div class="settings-item">
                     <label for="first-name">First Name:</label>
-                    <input type="text" id="first-name" value="<?php echo htmlspecialchars($first_name); ?>" />
+                    <input type="text" id="first-name" value="<?php echo htmlspecialchars($first_name); ?>" readonly />
                 </div>
                 <div class="settings-item">
                     <label for="last-name">Last Name:</label>
-                    <input type="text" id="last-name" value="<?php echo htmlspecialchars($last_name); ?>" />
+                    <input type="text" id="last-name" value="<?php echo htmlspecialchars($last_name); ?>" readonly />
                 </div>
             <?php } ?>
         </div>
@@ -316,22 +298,18 @@ $conn->close();
                 <select id="export-type" name="export-type" required>
                     <option value="csv">CSV</option>
                     <option value="excel">Excel</option>
-                    <option value="pdf">PDF</option>
                 </select>
             </div>
 
             <div class="settings-item">
-                <button type="submit">Export Now</button>
+                <button type="submit">Export Data</button>
+                <?php if ($export_success): ?>
+                    <p style="color: green;"><?php echo $export_success; ?></p>
+                <?php elseif ($export_error): ?>
+                    <p style="color: red;"><?php echo $export_error; ?></p>
+                <?php endif; ?>
             </div>
-
-            <?php if ($export_success): ?>
-                <p style="color: green;"><?php echo $export_success; ?></p>
-            <?php elseif ($export_error): ?>
-                <p style="color: red;"><?php echo $export_error; ?></p>
-            <?php endif; ?>
         </form>
     </div>
-
-    <script src="burger_menu.js"></script>
 </body>
 </html>

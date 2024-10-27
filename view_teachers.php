@@ -2,21 +2,21 @@
 include 'database_conn.php';
 
 $search = '';
-$query = "SELECT * FROM teachers";
+$query = "SELECT * FROM teachers WHERE is_deleted = 0";  
 
 if (isset($_POST['submit-button'])) {
     $search_type = mysqli_real_escape_string($conn, $_POST['search-type']);
     $search_input = mysqli_real_escape_string($conn, $_POST['search-input']);
 
-
     if ($search_type === 'id') {
-        $query = "SELECT * FROM teachers WHERE teacher_id LIKE '%$search_input%'";
+        $query = "SELECT * FROM teachers WHERE teacher_id LIKE '%$search_input%' AND is_deleted = 0";
     } else if ($search_type === 'name') {
-        $query = "SELECT * FROM teachers WHERE name LIKE '%$search_input%'";
+        $query = "SELECT * FROM teachers WHERE name LIKE '%$search_input%' AND is_deleted = 0";
     }
 } elseif (isset($_POST['view-all-button'])) {
-    $query = "SELECT * FROM teachers";
+    $query = "SELECT * FROM teachers WHERE is_deleted = 0";  
 }
+
 $result = mysqli_query($conn, $query);
 
 if (mysqli_num_rows($result) > 0) {
@@ -26,20 +26,13 @@ if (mysqli_num_rows($result) > 0) {
     $no_result_message = "No records found matching your search criteria";
 }
 
-
-
-
 function formatFieldName($field_name)
 {
-
     $formatted = str_replace('_', ' ', $field_name);
-
     $formatted = ucwords($formatted);
-
     return $formatted;
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 

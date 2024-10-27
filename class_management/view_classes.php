@@ -2,11 +2,11 @@
 include("C:/xampp/htdocs/Record-Management-System-second_revision/navbar.php");
 include("database_conn.php");
 
-
 $teachers_query = "
     SELECT t.teacher_id, t.name AS teacher_name, c.class_id, c.subject, c.year_level
     FROM teachers t
     JOIN classes c ON t.teacher_id = c.teacher_id
+    WHERE t.is_deleted = 0
     ORDER BY t.name, c.subject
 ";
 
@@ -62,6 +62,7 @@ $teachers_result = mysqli_query($conn, $teachers_query);
         tr:hover {
             background-color: #f1f1f1;
         }
+
         .class-detail-button {
             background-color: #007BFF;
             color: white;
