@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 08, 2024 at 04:03 PM
+-- Generation Time: Oct 27, 2024 at 06:44 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,55 @@ SET time_zone = "+00:00";
 --
 -- Database: `student_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin`
+--
+
+CREATE TABLE `admin` (
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`first_name`, `last_name`, `username`, `password`) VALUES
+('Villaluz Tumpalan ', 'Bondoc', 'admin', '1234'),
+('admin2', 'Last Name', 'Username', 'Password');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `attendance_id` int(11) NOT NULL,
+  `student_id` int(11) DEFAULT NULL,
+  `class_id` int(11) DEFAULT NULL,
+  `section_id` int(11) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `status` enum('Present','Absent','Late') DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`attendance_id`, `student_id`, `class_id`, `section_id`, `date`, `status`, `timestamp`) VALUES
+(1, 20240005, 14, 3, '2024-10-14', 'Absent', '2024-10-14 08:44:17'),
+(2, 20240006, 9, 12, '2024-10-14', 'Present', '2024-10-14 08:44:57'),
+(3, 20240006, 9, 12, '2024-10-14', 'Present', '2024-10-14 10:06:18'),
+(4, 20240005, 14, 3, '2024-10-19', 'Present', '2024-10-19 02:35:17'),
+(5, 20240005, 14, 3, '2024-10-19', 'Present', '2024-10-19 02:38:07'),
+(6, 20240004, 14, 1, '2024-10-20', 'Present', '2024-10-20 06:34:38');
 
 -- --------------------------------------------------------
 
@@ -48,7 +97,8 @@ INSERT INTO `classes` (`class_id`, `subject`, `teacher_id`, `year_level`) VALUES
 (14, 'Geography', 12, 10),
 (15, 'Physical Education', 13, 9),
 (16, 'Computer Science', 14, 11),
-(17, 'Art', 15, 9);
+(17, 'Art', 15, 9),
+(18, '1', 23, 10);
 
 -- --------------------------------------------------------
 
@@ -237,19 +287,21 @@ CREATE TABLE `students` (
   `grade_level` varchar(10) DEFAULT NULL,
   `enrollment_date` date DEFAULT NULL,
   `parent_names` varchar(200) DEFAULT NULL,
-  `parent_contact` varchar(15) DEFAULT NULL
+  `parent_contact` varchar(15) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `dob`, `gender`, `phone`, `home_address`, `grade_level`, `enrollment_date`, `parent_names`, `parent_contact`) VALUES
-(20240003, 'richmond', 'vilaluz', '2004-03-18', 'male', '09826783648', 'bongabon , NE', 'grade 9', '2024-09-02', 'ella elionor ', '0945266378'),
-(20240004, 'niko', 'boy hudlum', '2024-10-04', 'male', '346345346436', 'bangad cabanatuan', 'grade 8', '2024-10-05', 'nifa', '0984567348'),
-(20240005, 'axel ', 'tampalan', '2024-10-06', 'male', '0942674862', 'bangad cabanatuan', 'Grade 8', '2024-10-06', 'emelio', '0984567348'),
-(20240006, 'matt', 'slavador', '2000-10-06', 'male', '09684829411', 'bangad cabanatuan', 'grade 9', '2024-10-06', 'mercy bondoc', '0945266378'),
-(20240007, '1', '1', '2024-10-24', 'male', '1', '1', '1', '2024-10-24', '1', '1');
+INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `dob`, `gender`, `phone`, `home_address`, `grade_level`, `enrollment_date`, `parent_names`, `parent_contact`, `is_deleted`) VALUES
+(20240003, 'richmond', 'vilaluz', '2004-03-18', 'male', '09826783648', 'bongabon , NE', 'grade 9', '2024-09-02', 'ella elionor ', '0945266378', 0),
+(20240004, 'niko', 'boy hudlum', '2024-10-04', 'male', '346345346436', 'bangad cabanatuan', 'grade 8', '2024-10-05', 'nifa', '0984567348', 1),
+(20240005, 'axel ', 'tampalan', '2024-10-06', 'male', '0942674862', 'bangad cabanatuan', 'Grade 8', '2024-10-06', 'emelio', '0984567348', 0),
+(20240006, 'matt', 'slavador', '2000-10-06', 'male', '09684829411', 'bangad cabanatuan', 'grade 9', '2024-10-06', 'mercy bondoc', '0945266378', 1),
+(20240007, '1', '1', '2024-10-24', 'male', '1', '1', '1', '2024-10-24', '1', '1', 1),
+(20240008, 'Crizaldy', 'Miguel', '2024-10-20', 'male', 'asdadfsasdfasda', 'Vega Bongabon Nueva Ecija\r\nPag asa st', 'adsfasdfas', '2024-10-22', 'adsfasdf', 'asdfasdfa', 1);
 
 -- --------------------------------------------------------
 
@@ -286,7 +338,16 @@ INSERT INTO `student_class` (`student_id`, `class_id`) VALUES
 (20240005, 14),
 (20240005, 15),
 (20240005, 16),
-(20240005, 17);
+(20240005, 17),
+(20240006, 9),
+(20240006, 10),
+(20240006, 11),
+(20240006, 12),
+(20240006, 13),
+(20240006, 14),
+(20240006, 15),
+(20240006, 16),
+(20240006, 17);
 
 -- --------------------------------------------------------
 
@@ -304,14 +365,9 @@ CREATE TABLE `student_section` (
 --
 
 INSERT INTO `student_section` (`student_id`, `section_id`) VALUES
-(20240003, 7),
-(20240004, 2),
-(20240004, 7),
-(20240004, 11),
-(20240005, 1),
-(20240005, 2),
-(20240005, 7),
-(20240005, 8);
+(20240004, 1),
+(20240005, 3),
+(20240006, 12);
 
 -- --------------------------------------------------------
 
@@ -327,28 +383,40 @@ CREATE TABLE `teachers` (
   `contact_info` varchar(100) DEFAULT NULL,
   `home_address` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `is_deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teachers`
 --
 
-INSERT INTO `teachers` (`teacher_id`, `name`, `gender`, `subject`, `contact_info`, `home_address`, `username`, `password`) VALUES
-(6, 'John Doe', 'Female', 'Mathematics', 'johndoe@example.com', '123 Main St', 'teacher6', 'pass6'),
-(7, 'Jane Smith', 'Female', 'Physics', 'janesmith@example.com', '456 Elm St', 'teacher7', 'pass7'),
-(8, 'Robert Johnson', 'Male', 'Chemistry', 'robertjohnson@example.com', '789 Oak St', 'teacher8', 'pass8'),
-(9, 'Emily Davis', 'Female', 'Biology', 'emilydavis@example.com', '101 Pine St', 'teacher9', 'pass9'),
-(10, 'Michael Wilson', 'Male', 'English', 'michaelwilson@example.com', '202 Maple St', 'teacher10', 'pass10'),
-(11, 'Sarah Brown', 'Female', 'History', 'sarahbrown@example.com', '303 Cedar St', 'teacher11', 'pass11'),
-(12, 'David Miller', 'Male', 'Geography', 'davidmiller@example.com', '404 Birch St', 'teacher12', 'pass12'),
-(13, 'Jessica Moore', 'Female', 'Physical Education', 'jessicamoore@example.com', '505 Walnut St', 'teacher13', 'pass13'),
-(14, 'William Taylor', 'Female', 'Computer Science', 'williamtaylor@example.com', '606 Cherry St', 'teacher14', 'pass14'),
-(15, 'Sophia Anderson', 'Female', 'Art', 'sophiaanderson@example.com', '707 Ash St', 'teacher15', 'pass15');
+INSERT INTO `teachers` (`teacher_id`, `name`, `gender`, `subject`, `contact_info`, `home_address`, `username`, `password`, `is_deleted`) VALUES
+(6, 'John Doe', 'Female', 'Mathematics', 'johndoe@example.com', '123 Main St', 'teacher6', 'password6', 0),
+(7, 'Jane Smith', 'Female', 'Physics', 'janesmith@example.com', '456 Elm St', 'teacher7', 'pass7', 0),
+(8, 'Robert Johnson', 'Male', 'Chemistry', 'robertjohnson@example.com', '789 Oak St', 'teacher8', 'password8', 0),
+(9, 'Emily Davis', 'Female', 'Biology', 'emilydavis@example.com', '101 Pine St', 'teacher9', 'pass9', 0),
+(10, 'Michael Wilson', 'Male', 'English', 'michaelwilson@example.com', '202 Maple St', 'teacher10', 'pass10', 0),
+(11, 'Sarah Brown', 'Female', 'History', 'sarahbrown@example.com', '303 Cedar St', 'teacher11', 'pass11', 0),
+(12, 'David Miller', 'Male', 'Geography', 'davidmiller@example.com', '404 Birch St', 'teacher12', 'pass12', 0),
+(13, 'Jessica Moore', 'Female', 'Physical Education', 'jessicamoore@example.com', '505 Walnut St', 'teacher13', 'pass13', 0),
+(14, 'William Taylor', 'Female', 'Computer Science', 'williamtaylor@example.com', '606 Cherry St', 'teacher14', 'pass14', 0),
+(15, 'Sophia Anderson', 'Female', 'Art', 'sophiaanderson@example.com', '707 Ash St', 'teacher15', 'pass15', 0),
+(22, '1', 'Female', '1', '1', '11', '1', '1', 1),
+(23, '1', 'Male', '1', '1', '1', '1', '1', 1);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`attendance_id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `class_id` (`class_id`),
+  ADD KEY `section_id` (`section_id`);
 
 --
 -- Indexes for table `classes`
@@ -402,10 +470,16 @@ ALTER TABLE `teachers`
 --
 
 --
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `classes`
 --
 ALTER TABLE `classes`
-  MODIFY `class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `schedule`
@@ -423,17 +497,25 @@ ALTER TABLE `section`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20240008;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20240009;
 
 --
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
+  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`),
+  ADD CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`section_id`) REFERENCES `section` (`section_id`);
 
 --
 -- Constraints for table `classes`
